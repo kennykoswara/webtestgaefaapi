@@ -1,0 +1,166 @@
+﻿@*@model WebTest.Controllers.GaefaController.GaefaDetail*@
+@model WebTest.Controllers.GaefaController.GaefaDetailNew
+
+@{
+    ViewBag.Title = "Gaefa - Disapproved Transfer";
+    Layout = "~/Views/Shared/TransferTemplate.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger" role="alert"><b>Your payment has been disapproved by the admin.</b> Please give the right transfer information.</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-lg">
+                    <h3>Personal Details:</h3>
+                    <hr />
+                    @using (Html.BeginForm("ConfirmPaymentTransfer", "Gaefa", FormMethod.Post, new { enctype = "multipart/form-data", id = "transferForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="bookCode" id="bookCode" value="@Html.DisplayFor(model => model.booking.bookCode)" />
+                        <label for="date">Date</label>
+                        <input type="date" class="form-control" id="date" name="date" max="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.ToString("dd")" required />
+                        <br />
+                        <label for="sender">Sender Name</label>
+                        <input type="text" maxlength="25" pattern="^[a-zA-Z]{3,}?([ ][a-zA-Z\.]{1,}[]{0,}){0,}?$" title="Minimum 3 letters for your first name. Only letters and space(s) are allowed. Space must be followed by non-space character(s)" class="form-control" name="sender" required />
+                        <br />
+                        <label for="price">Amount Transferred</label>
+                        <input type="number" maxlength="7" pattern="\d+(\.\d{1,2})?$" step='0.01' value='@Html.DisplayFor(model => model.booking.totalPrice)' placeholder='0.00' class="form-control" name="price" min="@Html.DisplayFor(model => model.booking.totalPrice)" required />
+                        <br />
+                        <label for="bank">Payment to</label>
+                        <select class="form-control" id="bank" name="bank" required>
+                            <option value="">Select Bank...</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BNI">BNI</option>
+                            <option value="Mandiri">Mandiri</option>
+                        </select>
+                        <br />
+                        <label for="account">Account Number</label>
+                        <input name="account" maxlength="20" class="form-control" pattern="^\d{10,}$" required title="Only numbers are allowed (Minimum: 10)" placeholder="Enter your account Number" />
+                        <br />
+                        <label for="bankFrom">From Bank</label>
+                        <select class="form-control" id="bankFrom" name="bankFrom" required>
+                            <option value="">Select Bank...</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BNI">BNI</option>
+                            <option value="Mandiri">Mandiri</option>
+                        </select>
+                        <br />
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" name="email" value="@Html.DisplayFor(model => model.booking.email)" required readonly="readonly" />
+                        <br />
+                        <label for="receipt">Receipt (Optional, but Recommended)</label>
+                        <input type="file" class="form-control" name="receipt" id="receipt" accept="image/*" />
+                        <br />
+                        <input type="submit" class="btn btn-primary form-control" id="submitTransferDetail" value="Confirm Payment" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-lg">
+                    <h3>Booking Details:</h3>
+                    <hr />
+                    <span class="label label-primary">@ViewBag.DateToGo</span>
+                    <p>Title: <b>@Html.DisplayFor(model => model.gaefaPackage.name)</b></p>
+                    <p>Destination: <b>@Html.DisplayFor(model => model.gaefaPackage.location)</b></p>
+                    <p>Booking Code: <b>@Html.DisplayFor(model => model.booking.bookCode)</b></p>
+                    <p>
+                        Flight:
+                        @if (Model.gaefaPackage.includeFlight)
+                        {
+                            <b>Included</b>
+                        }
+                        else
+                        {
+                            <b>Not Included</b>
+                        }
+                    </p>
+                    <p>
+                        Inn:
+                        @if (Model.gaefaPackage.includeHotel)
+                        {
+                            <b>Included</b>
+                        }
+                        else
+                        {
+                            <b>Not Included</b>
+                        }
+                    </p>
+                    @*
+                    <p>Passenger List: </p>
+                    <ul>
+                        @foreach (var item in Model.booking.passenger.Split(';'))
+                        {
+                            <li><b>@Html.DisplayFor(model => item)</b></li>
+                        }
+                    </ul>
+                        *@
+
+                    <p>Passengers: <b>@Html.DisplayFor(model => model.booking.passengerAmount)</b> (<b>@Html.DisplayFor(model => model.booking.adultCount)</b> Adult(s), <b>@Html.DisplayFor(model => model.booking.childCount)</b> kid(s))</p>
+
+                    @*
+                    <p>Adult: </p>
+                    @if (Model.booking.adult != null)
+                    {
+                        <ul>
+                            @foreach (var item in Model.booking.adult.Split(';'))
+                            {
+                                <li><b>@Html.DisplayFor(model => item)</b></li>
+                            }
+                        </ul>
+                    }
+
+                    <p>Child: </p>
+                    @if (Model.booking.child != null)
+                    {
+                        <ul>
+                            @foreach (var item in Model.booking.child.Split(';'))
+                            {
+                                <li><b>@Html.DisplayFor(model => item)</b></li>
+                            }
+                        </ul>
+                    }
+                        *@
+
+                    <p>
+                        Coupon:
+                        @if (Model.booking.couponCode != null)
+                        {
+                            <b>@Html.DisplayFor(model => model.booking.couponCode)</b> @:(@ViewBag.DiscAmount% discount)
+                        }
+                        else
+                        {
+                            <b>-</b>
+                        }
+                    </p>
+
+                    <p>Total Price: US$ <b id="priceTotal">@Html.DisplayFor(model => model.booking.totalPrice)</b></p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="panel-title">Person In Charge Information</div>
+                    </div>
+                    <div class="panel-body" style="word-wrap:break-word">
+                        <p>Name: <b>@Html.DisplayFor(model => model.picInfo.name)</b></p>
+                        <p>Address: <b>@Html.DisplayFor(model => model.picInfo.address)</b></p>
+                        <p>Telephone: <b>@Html.DisplayFor(model => model.picInfo.telephone)</b></p>
+                        <p>E-mail: <b>@Html.DisplayFor(model => model.picInfo.email)</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

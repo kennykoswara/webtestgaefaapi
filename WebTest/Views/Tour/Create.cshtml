@@ -1,0 +1,85 @@
+﻿@{ 
+    ViewBag.Title = "Create Travel";
+    Layout = "~/Views/Shared/TourTemplate.cshtml";
+}
+
+@Html.Raw(TempData["successCreate"])
+<div class="container-fluid">
+    <h1 class="text-center">Create Tour Package</h1>
+    <hr />
+    <div class="row" style="margin-top: 5%">
+        <div class="col-md-offset-3 col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Create Your Tour Package</div>
+                <form id="createForm" action="@Url.Action("Create","Tour")" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-offset-1 col-md-10">
+                                <select id="countryList" name="destination" required>
+                                    <option value="">Select Destination...</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="row" style="margin-top:2%">
+                            <div class="col-md-offset-1 col-md-10">
+                                <p><b>Date From:</b></p>
+                                <input type="date" min="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.ToString("dd")" name="dateFrom" class="form-control" id="dateFrom" />
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:2%">
+                            <div class="col-md-offset-1 col-md-10">
+                                <p><b>Date Until:</b></p>
+                                <input type="date" min="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.ToString("dd")" name="dateUntil" class="form-control" id="dateUntil" />
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:2%">
+                            <div class="col-md-offset-1 col-md-3">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" id="flightCreate" name="flight" value="True" checked>Includes Flight</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" id="innCreate" name="inn" value="True" checked>Includes Inn</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" id="customCreate" name="custom" value="True">Customizable</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:2%">
+                            <div class="col-md-offset-1 col-md-6">
+                                <p><b>Price</b></p>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label>US$</label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <input type="number" min="0" name="price" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-md-offset-1 col-md-4">
+                                <input id="submitTourCreation" type="submit" class="btn btn-primary" value="Create tour package"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

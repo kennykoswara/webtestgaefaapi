@@ -1,0 +1,15 @@
+﻿#loginModal {
+    margin-top: 10%;
+}
+
+#loginModal .modal-dialog {
+    width: 40%;
+}
+
+.form-control {
+    width: 70%
+}
+
+.form-group {
+    text-align: center;
+}

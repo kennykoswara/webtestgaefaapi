@@ -1,0 +1,73 @@
+﻿@model IEnumerable<WebTest.gaefa_coupon>
+
+@{
+    Layout = "~/Views/Shared/HomeTemplate.cshtml";
+    ViewBag.Title = "Test - Home";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover sortable">
+                <thead>
+                    <tr>
+                        <th>Coupon Code</th>
+                        <th>Available Date</th>
+                        <th>Expiry Date</th>
+                        <th>Minimum Pack(s)</th>
+                        <th>Minimum Price(s) (US$)</th>
+                        <th>Discount Amount</th>
+                        <th>Status</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach(var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(model => item.couponCode)</td>
+                        <td>@item.availableDate.ToString("dd/MM/yyyy")</td>
+                        <td>@item.expiryDate.ToString("dd/MM/yyyy")</td>
+                        @if(item.packMin == null)
+                        {
+                            <td>-</td>
+                        }
+                        else
+                        {
+                            <td>@Html.DisplayFor(model => item.packMin)</td>
+                        }
+                        @if (item.priceMin == null)
+                        {
+                            <td>-</td>
+                        }
+                        else
+                        {
+                            <td>@Html.DisplayFor(model => item.priceMin)</td>
+                        }
+
+                        @if(item.discPercentage == null && item.discPrice != null)
+                        {
+                            <td>US$ @Html.DisplayFor(model => item.discPrice)</td>
+                        }
+                        else if (item.discPrice == null && item.discPercentage != null)
+                        {
+                            <td>@Html.DisplayFor(model => item.discPercentage) %</td>
+                        }
+                        @if (item.status)
+                        {
+                            <td>Not used</td>
+                            <td><a href="@Url.Action("RemoveCoupon","Home", new { couponCode = item.couponCode })" class="text-danger"><i class="fa fa-lg fa-times-circle"></i></a></td>
+                        }
+                        else
+                        {
+                            <td>Used</td>
+                            <td></td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

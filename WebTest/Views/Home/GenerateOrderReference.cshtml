@@ -1,0 +1,14 @@
+﻿@model string
+
+@{
+    Layout = "~/Views/Shared/HomeTemplate.cshtml";
+    ViewBag.Title = "Test - Home";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>@Html.DisplayFor(model => model)</h3>
+        </div>
+    </div>
+</div>

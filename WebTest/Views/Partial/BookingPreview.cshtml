@@ -1,0 +1,36 @@
+﻿<div class="panel panel-success">
+    <div class="panel-heading">
+        <div class="panel-title">
+            Booking Code: <span id="showBookCode"></span>
+            <span class="pull-right" id="showLocation"></span>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="label label-primary" id="tourDate"></span>
+                        @*
+                        <span class="label label-primary" id="showStartDate"></span>
+                        ~
+                        <span class="label label-primary" id="showEndDate"></span>
+                            *@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        Status: <b id="showPaymentStatus"></b>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <form id="toDetailForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="bookingCode" value="" />
+                    <input type="submit" id="toDetailButton" class="btn btn-primary pull-right" value="Show more detail" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

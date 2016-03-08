@@ -1,0 +1,55 @@
+﻿@model string
+@{
+    Layout = "";
+}
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Logout Successful</title>
+    <link href="~/Content/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="~/Content/home.css" type="text/css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+    @Html.Partial("Navbar")
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <input type="hidden" id="url" value="@Url.Action("Index","Home")" />
+                <div class="alert alert-info" role="alert"><span class='sr-only'>Success: </span> Logout Successful. You will be redirected to the home page in <span id="timeLeft">2</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Scripts/jquery-1.12.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/additional-methods.min.js"></script>
+    <script>
+        $(".nav-tabs a").click(function () {
+            $(this).tab('show');
+        });
+    </script>
+    <script src="~/Scripts/navbar.js"></script>
+    <script>
+        $(document).ready(function () {
+            var url = $('#url').val();
+            window.setInterval(function () {
+                var timeLeft = parseInt($("#timeLeft").text());
+                if (timeLeft == 1) {
+                    window.location.href = (url);
+                } else {
+                    $("#timeLeft").text(timeLeft - eval(1));
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>
+
+

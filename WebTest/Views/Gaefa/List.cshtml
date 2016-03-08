@@ -1,0 +1,151 @@
+﻿@model IEnumerable<WebTest.Models.GaefaPackage>
+@using WebTest.PortalList
+
+@{
+    ViewBag.Title = "WebTest - List";
+    Layout = "~/Views/Shared/GaefaTemplate.cshtml";
+
+    GaefaPackageSort sort = ViewBag.sort;
+    GaefaFilter filter = ViewBag.filter;
+    GaefaPagination pagination = ViewBag.pagination;
+}
+
+<div class="container-fluid">
+    <form role="form" method="get" action="@Url.Action("List","Gaefa")" class="form-inline">
+        <div class="row">
+            <div class="col-md-7">
+                <label for="keyword">Keyword: </label>
+                <div class="input-group">
+                    <input type="text" class="form-control" value="@filter.titleOrLocation" maxlength="50" name="keyword" />
+                    <span class="input-group-btn"><button type="submit" class="btn btn-primary"><i class="fa fa-search" title="Search keyword" onclick="this.form.submit()"></i></button></span>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-2">
+                <label for="flight">Flight: </label>
+                <select class="form-control" name="flight" onchange="this.form.submit()">
+                    <option value="" @((filter.include_flight == null) ? "selected" : "")>---</option>
+                    <option value="true" @((filter.include_flight == true) ? "selected" : "")>Yes</option>
+                    <option value="false" @((filter.include_flight == false) ? "selected" : "")>No</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="inn">Inn: </label>
+                <select class="form-control" name="inn" onchange="this.form.submit()">
+                    <option value="" @((filter.include_inn == null) ? "selected" : "")>---</option>
+                    <option value="true" @((filter.include_inn == true) ? "selected" : "")>Yes</option>
+                    <option value="false" @((filter.include_inn == false) ? "selected" : "")>No</option>
+                </select>
+            </div>
+        </div>
+        <hr/>
+        <div class="row" style="margin-bottom: 1%">
+            <div class="col-md-6">
+                <label for="sortType">Sort by:</label>
+                <select class="form-control" name="sortType" onchange="this.form.submit();">
+                    <option value="@GaefaPackageSort.sort_type.cdate" @((sort.sortType == GaefaPackageSort.sort_type.cdate) ? "selected" : "")>Date Created</option>
+                    <option value="@GaefaPackageSort.sort_type.location" @((sort.sortType == GaefaPackageSort.sort_type.location) ? "selected" : "")>Destination</option>
+                    <option value="@GaefaPackageSort.sort_type.price_per_pack" @((sort.sortType == GaefaPackageSort.sort_type.price_per_pack) ? "selected" : "")>Price</option>
+                    <option value="@GaefaPackageSort.sort_type.start_package" @((sort.sortType == GaefaPackageSort.sort_type.start_package) ? "selected" : "")>Tour Date</option>
+                    <option value="@GaefaPackageSort.sort_type.title" @((sort.sortType == GaefaPackageSort.sort_type.title) ? "selected" : "")>Title</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="sortMode">Order By:</label>
+                <select class="form-control" name="sortMode" onchange="this.form.submit();">
+                    <option value="@GaefaPackageSort.sort_mode.ASCENDING" @((sort.sortMode == GaefaPackageSort.sort_mode.ASCENDING) ? "selected" : "")>Ascending</option>
+                    <option value="@GaefaPackageSort.sort_mode.DESCENDING" @((sort.sortMode == GaefaPackageSort.sort_mode.DESCENDING) ? "selected" : "")>Descending</option>
+                </select>
+            </div>
+        </div>
+    </form>
+    
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        if (i % 3 == 0)
+        {
+            @:<div class="row">
+        }
+        <div class="col-md-4">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <h5>@Html.DisplayFor(modelItem => Model.ElementAt(i).name)</h5>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <span class="label label-primary">@Html.DisplayFor(modelItem => Model.ElementAt(i).startDate)</span>
+                    ~
+                    <span class="label label-primary">@Html.DisplayFor(modelItem => Model.ElementAt(i).endDate)</span>
+                    <br />
+                    Destination: <b>@Html.DisplayFor(modelItem => Model.ElementAt(i).location)</b>
+                    <br />
+                    Price: <b>US$ @Html.DisplayFor(modelItem => Model.ElementAt(i).pricePerPack)</b>
+                    <br />
+                    Minimum Pack: <b>@Html.DisplayFor(modelItem => Model.ElementAt(i).minimumPack)</b> pax
+                    <br />
+                    Duration: <b>@Html.DisplayFor(modelItem => Model.ElementAt(i).duration)</b> day(s)
+                    <br/>
+                    @if (Model.ElementAt(i).includeHotel)
+                    {
+                        <span class="fa-stack" title="Include Inn">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-home fa-stack-1x fa-inverse"></i>
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="fa-stack" title="Not Include Inn">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-home fa-stack-1x fa-inverse"></i>
+                            <i class="fa fa-ban fa-stack-2x text-danger"></i>
+                        </span>
+                    }
+
+                    @if (Model.ElementAt(i).includeFlight)
+                    {
+                        <span class="fa-stack" title="Include Flight">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-plane fa-stack-1x fa-inverse"></i>
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="fa-stack" title="Not Include Flight">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-plane fa-stack-1x fa-inverse"></i>
+                            <i class="fa fa-ban fa-stack-2x text-danger"></i>
+                        </span>
+                    }
+                    <a href="@Url.Action("Detail", "Gaefa", new { id = Model.ElementAt(i).id })" class="pull-right">More Details...</a>
+                </div>
+            </div>
+        </div>
+        if (i % 3 == 2 || i == Model.Count()-1)
+        {
+            @:</div>
+        }
+    }
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well well-sm text-center">
+                Page @(ViewBag.PackageAmount == 0 ? 0 : (ViewBag.pagination.start / ViewBag.pagination.limit)+1) of @Math.Ceiling((double)ViewBag.PackageAmount/ViewBag.pagination.limit)
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <input type="hidden" value="@ViewBag.PackageAmount" id="PackageAmount" />
+            <input type="hidden" value="@ViewBag.pagination.limit" id="LimitPerPage" />
+            <ul id="pagination" class="pagination-sm"></ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    
+</script>

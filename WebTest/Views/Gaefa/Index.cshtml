@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "WebTest - Index";
+    Layout = "~/Views/Shared/GaefaTemplate.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="text-center">Find any tour you want.</h1>
+    <hr/>
+    <div class="row" style="margin-top: 5%">
+        <div class="col-md-offset-3 col-md-6">
+            <div class="panel panel-danger">
+                <div class="panel-heading">Specify your requirements</div>
+                <form id="searchForm" action="@Url.Action("List", "Gaefa")">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-offset-1 col-md-10">
+                                <p><b>Destination</b></p>
+                                <input type="text" name="destination" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12"></div>
+                        </div>
+
+                        <!--
+                        <div class="row" style="margin-top:2%">
+                            <div class="col-md-offset-1 col-md-10">
+                                <p><b>Date From:</b></p>
+                                <input type="date" name="dateFrom" min="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.ToString("dd")" class="form-control" id="dateFrom" value="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.Day" required/>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:2%">
+                            <div class="col-md-offset-1 col-md-10">
+                                <p><b>Date Until:</b></p>
+                                <input type="date" name="dateUntil" min="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.ToString("dd")" class="form-control" id="dateUntil" value=""/>
+                            </div>
+                        </div>
+
+                        -->
+                        <!--
+                        <div class="row" style="margin-top:2%">
+                            <div class="col-md-offset-1 col-md-3">
+                                <p><b>People:</b></p>
+                                <input type="number" name="peopleQuantity" class="form-control" value="1" min="1" />
+                            </div>
+                        </div>
+                        -->
+
+                        <div class="row" style="margin-top:2%">
+                            <div class="col-md-offset-1 col-md-4">
+                                <label for="flight">Flight:</label>
+                                <select class="form-control" name="flight" id="flight">
+                                    <option value="">--</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-offset-1 col-md-4">
+                                <label for="inn">Inn:</label>
+                                <select class="form-control" name="inn" id="inn">
+                                    <option value="">--</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!--
+                        <div class="row" style="margin-top:2%">
+                            <div class="col-md-offset-1 col-md-6">
+                                <label for="custom">Custom:</label>
+                                <select class="form-control" name="custom" id="custom">
+                                    <option value="Both">--</option>
+                                    <option value="True">Customizable</option>
+                                    <option value="False">Non-Customizable</option>
+                                </select>
+                            </div>
+                        </div>
+                            -->
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-md-offset-1 col-md-4">
+                                <input type="submit" class="btn btn-primary" value="Find tour package"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</div>

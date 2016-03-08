@@ -1,0 +1,24 @@
+﻿@model string
+
+@{
+    Layout = "~/Views/Shared/GaefaTemplate.cshtml";
+    ViewBag.Title = "WebTest - PayPal payment is successful";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well well-sm">Your PayPal payment is successful.</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well well-lg">Your booking code is <b>@Html.DisplayFor(model => model)</b></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well">You can now view the package on the 'Purchased' section.</div>
+        </div>
+    </div>
+</div>

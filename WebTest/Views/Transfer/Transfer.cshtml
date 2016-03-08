@@ -1,0 +1,100 @@
+﻿@model WebTest.Controllers.BookingController.BookingDetailPage
+
+@{
+    ViewBag.Title = "Booking Detail";
+    Layout = "~/Views/Shared/TransferTemplate.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-lg">
+                    <h3>Personal Details:</h3>
+                    <hr/>
+                    @using (Html.BeginForm("ConfirmPaymentTransfer", "Transfer", FormMethod.Post, new { enctype = "multipart/form-data", id = "transferForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="bookCode" id="bookCode" value="@Html.DisplayFor(model => model.bookCode)" />
+                        <label for="date">Date</label>
+                        <input type="date" class="form-control" id="date" name="date" max="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.ToString("dd")" required />
+                        <br />
+                        <label for="sender">Sender Name</label>
+                        <input type="text" pattern="[a-zA-Z]{3,}[a-zA-Z ]{0,}" title="Minimum 3 letters for your first name. Only letters and space(s) are allowed" class="form-control" name="sender" required />
+                        <br />
+                        <label for="price">Amount Transferred</label>
+                        <input type="number" pattern="\d+(\.\d{1,2})?$" step='0.01' value='@Html.DisplayFor(model => model.totalPrice)' class="form-control" name="price" min="@Html.DisplayFor(model => model.totalPrice)" required />
+                        <br />
+                        <label for="bank">Payment to</label>
+                        <select class="form-control" id="bank" name="bank" required>
+                            <option value="">Select Bank...</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BNI">BNI</option>
+                            <option value="Mandiri">Mandiri</option>
+                        </select>
+                        <br />
+                        <label for="account">Account Number</label>
+                        <input type="number" class="form-control" name="account" minlength="10" required />
+                        <br />
+                        <label for="bankFrom">From Bank</label>
+                        <select class="form-control" id="bankFrom" name="bankFrom" required>
+                            <option value="">Select Bank...</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BNI">BNI</option>
+                            <option value="Mandiri">Mandiri</option>
+                        </select>
+                        <br />
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" name="email" required />
+                        <br />
+                        <label for="receipt">Receipt</label>
+                        <input type="file" class="form-control" name="receipt" id="receipt" accept="image/*" />
+                        <br />
+                        <input type="submit" class="btn btn-primary form-control" id="submitTransferDetail" value="Confirm Payment" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-lg">
+                    <h3>Booking Details:</h3>
+                    <hr/>
+                    <p><b>Title</b></p>
+                    <p>Destination: <b>@Html.DisplayFor(model => model.destination)</b></p>
+                    <p>Booking Code: <b>@Html.DisplayFor(model => model.bookCode)</b></p>
+                    <p>Flight: 
+                    @if (Model.flight == "True")
+                    {
+                        <b>Included</b>
+                    }
+                    else
+                    {
+                        <b>Not Included</b>
+                    }
+                    </p>
+                    <p>Inn: 
+                    @if (Model.flight == "True")
+                    {
+                        <b>Included</b>
+                    }
+                    else
+                    {
+                        <b>Not Included</b>
+                    }
+                    </p>
+                    <p>Passenger List: </p>
+                    <ul>
+                        @foreach (var item in Model.passengerList)
+                        {
+                            <li><b>@Html.DisplayFor(model => item)</b></li>
+                        }
+                    </ul>
+                    <p>Total Price: US$ <b id="priceTotal">@Html.DisplayFor(model => model.totalPrice)</b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

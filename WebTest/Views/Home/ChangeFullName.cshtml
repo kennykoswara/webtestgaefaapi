@@ -1,0 +1,49 @@
+﻿@model string
+
+@{
+    Layout = "~/Views/Shared/HomeTemplate.cshtml";
+    ViewBag.Title = "Test - Home";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12" id="changeFullNameAlert">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <div class="panel-title">Full Name</div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b>Your current Full Name: </b>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="well well-sm">
+                                <span id="currFullName">@Html.DisplayFor(modelItem => modelItem)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form role="form" id="changeFullNameForm" method="post">
+                                @Html.AntiForgeryToken()
+                                <label for="newFullName">Your new Full Name: </label>
+                                <input type="text" class="form-control" id="newFullName" name="newFullName" style="width: 100%"/>
+                                <br/>
+                                <input type="submit" id="submitChangeFullName" class="btn btn-lg btn-primary" value="Submit change" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

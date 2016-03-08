@@ -1,0 +1,372 @@
+﻿
+@*@model WebTest.Controllers.GaefaController.BookingAndPayPal*@
+@model WebTest.Controllers.GaefaController.BookingAndPayPalNew
+
+@{
+    ViewBag.Title = "WebTest - PayPal Payment Detail";
+    Layout = "~/Views/Shared/GaefaTemplate.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                Payment Information
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <b>Payment Date and Time:</b>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="well well-sm">
+                                                @Html.DisplayFor(model => model.paypal.paypalDateAndTime)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <b>PayPal Name:</b>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="well well-sm">
+                                                @Html.DisplayFor(model => model.paypal.paypalName)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <b>PayPal Payer ID:</b>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="well well-sm">
+                                                @Html.DisplayFor(model => model.paypal.paypalPayerID)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <b>PayPal Address:</b>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="well well-sm">
+                                                @Html.DisplayFor(model => model.paypal.paypalAddress)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <b>Amount Paid:</b>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="well well-sm">
+                                                US$ @Html.DisplayFor(model => model.paypal.paypalAmount)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @{
+                                if (Session[WebTest.Infrastructure.GlobalVar.SESSION_ID] != null)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <b>PayPal Transaction ID:</b>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="well well-sm">
+                                                        @Html.DisplayFor(model => model.paypal.paypalTransactionID)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <b>Note:</b>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="well well-sm">
+                                                @Html.Raw(Model.booking.booking.note)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                Tour package information
+                                <span class="pull-right">Booking Code: @Html.DisplayFor(model => model.booking.booking.bookCode)</span>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="label label-primary">@ViewBag.DateToGo</span>
+                                </div>
+                            </div>
+
+                            @*
+                <div class="row">
+                    <div class="col-md-6">
+                        <span class="label label-primary">@Html.DisplayFor(model => model.booking.gaefaPackage.startDate)</span>
+                        ~
+                        <span class="label label-primary">@Html.DisplayFor(model => model.booking.gaefaPackage.endDate)</span>
+                    </div>
+                </div>
+                            *@
+
+                            <div class="row">
+                                <div class="col-md-12" style="word-wrap:break-word">
+                                    Title: <b>@Html.DisplayFor(model => model.booking.gaefaPackage.name)</b>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Payment Method: <b>@Html.DisplayFor(model => model.booking.booking.paymentMethod)</b>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Status: <b>@Html.DisplayFor(model => model.booking.booking.status)</b>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Destination: <b>@Html.DisplayFor(model => model.booking.gaefaPackage.location)</b>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    @*
+                        Name:
+                        <ul>
+                            @foreach (var item in Model.booking.booking.passenger.Split(';'))
+                            {
+                                <li><b>@Html.DisplayFor(model => item)</b></li>
+                            }
+                        </ul>
+                                    *@
+
+                                    <p>Passengers: <b>@Html.DisplayFor(model => model.booking.booking.passengerAmount)</b> (<b>@Html.DisplayFor(model => model.booking.booking.adultCount)</b> Adult(s), <b>@Html.DisplayFor(model => model.booking.booking.childCount)</b> kid(s))</p>
+
+                                    @*
+                        <p>Adult: </p>
+                        @if (Model.booking.booking.adult != null)
+                        {
+                            <ul>
+                                @foreach (var item in Model.booking.booking.adult.Split(';'))
+                                {
+                                    <li><b>@Html.DisplayFor(model => item)</b></li>
+                                }
+                            </ul>
+                        }
+
+                        <p>Child: </p>
+                        @if (Model.booking.booking.child != null)
+                        {
+                            <ul>
+                                @foreach (var item in Model.booking.booking.child.Split(';'))
+                                {
+                                    <li><b>@Html.DisplayFor(model => item)</b></li>
+                                }
+                            </ul>
+                        }
+                                    *@
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Flights:
+                                    @if (Model.booking.gaefaPackage.includeFlight)
+                                    {
+                                        <b>Included</b>
+                                    }
+                                    else
+                                    {
+                                        <b>Not Included</b>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Inn:
+                                    @if (Model.booking.gaefaPackage.includeHotel)
+                                    {
+                                        <b>Included</b>
+                                    }
+                                    else
+                                    {
+                                        <b>Not Included</b>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Coupon:
+                                    @if (Model.booking.booking.couponCode != null)
+                                    {
+                                        <b>@Html.DisplayFor(model => model.booking.booking.couponCode)</b> @:(@ViewBag.DiscAmount% discount)
+                                    }
+                                    else
+                                    {
+                                        <b>-</b>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Email: <b>@Html.DisplayFor(model => model.booking.booking.email)</b>
+                                </div>
+                            </div>
+
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-12" style="word-wrap:break-word">
+                                    @foreach (var days in Model.booking.gaefaPackage.data.days)
+                                    {
+                                        <u><span>Day</span> @Html.DisplayFor(modelItem => days.dayNum)<span>:</span></u>
+                                        <br />
+                                        foreach (var events in days.events)
+                                        {
+                                            @:- (@Html.DisplayFor(modelItem => events.time))
+                                            <br />
+                                            if (Html.DisplayFor(modelItem => events.category).ToString() == "it-flight")
+                                            {
+                                                <span class="fa-stack text-primary" title="Flight">
+                                                    <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                    <i class="fa fa-plane fa-stack-1x"></i>
+                                                </span>
+                                            }
+                                            else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-food")
+                                            {
+                                                <span class="fa-stack text-primary" title="Food">
+                                                    <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                    <i class="fa fa-cutlery fa-stack-1x"></i>
+                                                </span>
+                                            }
+                                            else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-transport")
+                                            {
+                                                <span class="fa-stack text-primary" title="Transport">
+                                                    <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                    <i class="fa fa-bus fa-stack-1x"></i>
+                                                </span>
+                                            }
+                                            else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-inn")
+                                            {
+                                                <span class="fa-stack text-primary" title="Hotel/Inn">
+                                                    <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                    <i class="fa fa-bed fa-stack-1x"></i>
+                                                </span>
+                                            }
+                                            else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-place")
+                                            {
+                                                <span class="fa-stack text-primary" title="Location">
+                                                    <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                    <i class="fa fa-street-view fa-stack-1x"></i>
+                                                </span>
+                                            }
+                                            @Html.DisplayFor(modelItem => events.title)
+                                            <br />
+                                            <b>@Html.DisplayFor(modelItem => events.description)</b>
+                                            <br />
+                                            <br />
+                                        }
+                                        <hr />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Total price: US$ <b>@Html.DisplayFor(model => model.booking.booking.totalPrice)</b> (Original Price: US$ <b>@ViewBag.OriginalPrice</b>, Tax: US$ <b>@ViewBag.Tax</b>)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="panel-title">Person In Charge Information</div>
+                        </div>
+                        <div class="panel-body" style="word-wrap:break-word">
+                            <p>Name: <b>@Html.DisplayFor(model => model.picInfo.name)</b></p>
+                            <p>Address: <b>@Html.DisplayFor(model => model.picInfo.address)</b></p>
+                            <p>Telephone: <b>@Html.DisplayFor(model => model.picInfo.telephone)</b></p>
+                            <p>E-mail: <b>@Html.DisplayFor(model => model.picInfo.email)</b></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "WebTest - Approve Transfer Payment";
+    Layout = "~/Views/Shared/GaefaTemplate.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-5 col-xs-12 col-sm-12">
+                    <form method="post" role="form" id="findBookingForm">
+                        @Html.AntiForgeryToken()
+                        <fieldset>
+                            <legend>Find your booking here by filling out the details.</legend>
+                            <div class="form-group">
+                                <input type="email" name="email" id="emailToFind" class="form-control" placeholder="Enter your email" maxlength="50" required/>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="bookingCode" id="bookingCodeToFind" class="form-control" placeholder="Enter your booking code" required minlength="5"/>
+                            </div>
+                        </fieldset>
+                        <input type="submit" id="findBookingButton" class="btn btn-primary" value="Find my booking" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" id="showBookingPreview">
+            
+        </div>
+    </div>
+</div>
+

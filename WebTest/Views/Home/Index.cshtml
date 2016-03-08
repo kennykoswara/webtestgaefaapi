@@ -1,0 +1,71 @@
+﻿
+
+@{
+    Layout = "~/Views/Shared/HomeTemplate.cshtml";
+    ViewBag.Title = "Test - Home";
+}
+
+<div class="container-fluid">
+    
+    @{
+        if (@Session[WebTest.Infrastructure.GlobalVar.SESSION_NAME] != null)
+        {
+            <div class="jumbotron">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12" id="alertSync">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" id="alertMail">
+
+                        </div>
+                    </div>
+                    <h1>Welcome back, @Session[WebTest.Infrastructure.GlobalVar.SESSION_NAME]</h1>
+                    <p>There is/are <span class="text-danger">@ViewBag.WaitingApproval</span> payment(s) waiting for your approval</p>
+                    <p><span class="text-primary">@ViewBag.Sold</span> package(s) have been sold</p>
+                    <p><span class="text-info">@ViewBag.WaitingConfirmation</span> payment(s) haven't been confirmed by users</p>
+                    <p><span class="text-warning">@ViewBag.Disapproved</span> payment(s) have been disapproved and not yet reconfirmed</p>
+                    <br/>
+                    <p><span class="text-success" id="unPostedPackage">@ViewBag.Unposted</span> payment(s) have not been posted to Gaefa because of error(s). <button id="syncToGaefa" class="btn btn-primary"><i class="fa fa-refresh"></i> Sync</button></p>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-sm btn-primary" id="sendEmailToGaefa">Report error / other issues to Gaefa admin</button>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-12" id="mailDiv" style="display:none">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <form method="post" id="sendMailToAdmin">
+                                        <input type="text" class="form-control" value="" id="emailSubject" name="emailSubject" placeholder="Enter the subject" required/>
+                                        <br />
+                                        <textarea form="" id="emailBody" name="emailBody" class="form-control" rows="5" placeholder="Enter your message" style="max-width:100%" required></textarea>
+                                        <br />
+                                        <button type="submit" class="btn btn-primary" id="sendMailToAdminButton"><i class="fa fa-envelope"></i> Send Mail</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        }
+        else
+        {
+            <div class="jumbotron">
+                <div class="container">
+                    <h1>Welcome to WebTest</h1>
+                    <p>You can use our website to buy tour package(s) that you want</p>
+                    <p>Buying tour package has never been easier than this</p>
+                </div>
+            </div>
+        }
+    }
+    
+
+</div>

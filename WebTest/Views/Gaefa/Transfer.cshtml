@@ -1,0 +1,229 @@
+﻿@*@model WebTest.Controllers.GaefaController.GaefaDetail*@
+@model WebTest.Controllers.GaefaController.GaefaDetailNew
+
+@{
+    ViewBag.Title = "WebTest - Transfer Confirmation";
+    Layout = "~/Views/Shared/TransferTemplate.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-lg">
+                    <h3>Payment Details:</h3>
+                    <hr />
+                    @using (Html.BeginForm("ConfirmPaymentTransfer", "Gaefa", FormMethod.Post, new { enctype = "multipart/form-data", id = "transferForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="bookCode" id="bookCode" value="@Html.DisplayFor(model => model.booking.bookCode)" />
+                        <label for="date">Payment Date:</label>
+                        <input type="date" class="form-control" id="date" name="date" max="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.ToString("dd")" required/>
+                        <br />
+                        <label for="sender">Sender Name</label>
+                        <input type="text" maxlength="25" pattern="^[a-zA-Z]{3,}?([ ][a-zA-Z\.]{1,}[]{0,}){0,}?$" title="Minimum 3 letters for your first name. Only letters and space(s) are allowed. Space must be followed by non-space character(s)" class="form-control" name="sender" required/>
+                        <br />
+                        <label for="price">Amount Transferred</label>
+                        <input type="number" maxlength="7" pattern="\d+(\.\d{1,2})?$" step='0.01' value='@Html.DisplayFor(model => model.booking.totalPrice)' placeholder='0.00' class="form-control" name="price" min="@Html.DisplayFor(model => model.booking.totalPrice)" required/>
+                        <br />
+                        <label for="bank">Payment to</label>
+                        <select class="form-control" id="bank" name="bank" required>
+                            <option value="">Select Bank...</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BNI">BNI</option>
+                            <option value="Mandiri">Mandiri</option>
+                        </select>
+                        <br />
+                        <label for="account">Account Number</label>
+                        <input name="account" class="form-control" pattern="^\d{10,}$" required title="Only numbers are allowed (Minimum: 10)" maxlength="20" placeholder="Enter your account Number" />
+                        <br />
+                        <label for="bankFrom">From Bank</label>
+                        <select class="form-control" id="bankFrom" name="bankFrom" required>
+                            <option value="">Select Bank...</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BNI">BNI</option>
+                            <option value="Mandiri">Mandiri</option>
+                        </select>
+                        <br />
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" name="email" value="@Html.DisplayFor(model => model.booking.email)" required readonly="readonly"/>
+                        <br />
+                        <label for="receipt">Receipt (Optional, but Recommended)</label>
+                        <input type="file" class="form-control" name="receipt" id="receipt" accept="image/*"/>
+                        <br />
+                        <input type="submit" class="btn btn-primary form-control" id="submitTransferDetail" value="Confirm Payment" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-lg">
+                    <h3>Booking Details:</h3>
+                    <hr />
+                    <span class="label label-primary">@ViewBag.DateToGo</span>
+                    <p>Title: <b>@Html.DisplayFor(model => model.gaefaPackage.name)</b></p>
+                    <p>Destination: <b>@Html.DisplayFor(model => model.gaefaPackage.location)</b></p>
+                    <p>Booking Code: <b>@Html.DisplayFor(model => model.booking.bookCode)</b></p>
+                    <p>
+                        Flight:
+                        @if (Model.gaefaPackage.includeFlight)
+                        {
+                            <b>Included</b>
+                        }
+                        else
+                        {
+                            <b>Not Included</b>
+                        }
+                    </p>
+                    <p>
+                        Inn:
+                        @if (Model.gaefaPackage.includeHotel)
+                        {
+                            <b>Included</b>
+                        }
+                        else
+                        {
+                            <b>Not Included</b>
+                        }
+                    </p>
+                    @*
+                    <p>Passenger List: </p>
+                    <ul>
+                        @foreach (var item in Model.booking.passenger.Split(';'))
+                        {
+                            <li><b>@Html.DisplayFor(model => item)</b></li>
+                        }
+                    </ul>
+                        *@
+
+                    <p>Passengers: <b>@Html.DisplayFor(model => model.booking.passengerAmount)</b> (<b>@Html.DisplayFor(model => model.booking.adultCount)</b> Adult(s), <b>@Html.DisplayFor(model => model.booking.childCount)</b> kid(s))</p>
+
+                    @*
+                    <p>Adult: </p>
+                    @if (Model.booking.adult != null)
+                    {
+                        <ul>
+                            @foreach (var item in Model.booking.adult.Split(';'))
+                            {
+                                <li><b>@Html.DisplayFor(model => item)</b></li>
+                            }
+                        </ul>
+                    }
+
+                    <p>Child: </p>
+                    @if (Model.booking.child != null)
+                    {
+                        <ul>
+                            @foreach (var item in Model.booking.child.Split(';'))
+                            {
+                                <li><b>@Html.DisplayFor(model => item)</b></li>
+                            }
+                        </ul>
+                    }
+                    *@
+
+                    <div class="row">
+                        <div class="col-md-12" style="word-wrap:break-word">
+                            @foreach (var days in Model.gaefaPackage.data.days)
+                            {
+                                <u><span>Day</span> @Html.DisplayFor(modelItem => days.dayNum)<span>:</span></u>
+                                <br />
+                                foreach (var events in days.events)
+                                {
+                                    @:- (@Html.DisplayFor(modelItem => events.time))
+                                    <br />
+                                    if (Html.DisplayFor(modelItem => events.category).ToString() == "it-flight")
+                                    {
+                                        <span class="fa-stack text-primary" title="Flight">
+                                            <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                            <i class="fa fa-plane fa-stack-1x"></i>
+                                        </span>
+                                    }
+                                    else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-food")
+                                    {
+                                        <span class="fa-stack text-primary" title="Food">
+                                            <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                            <i class="fa fa-cutlery fa-stack-1x"></i>
+                                        </span>
+                                    }
+                                    else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-transport")
+                                    {
+                                        <span class="fa-stack text-primary" title="Transport">
+                                            <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                            <i class="fa fa-bus fa-stack-1x"></i>
+                                        </span>
+                                    }
+                                    else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-inn")
+                                    {
+                                        <span class="fa-stack text-primary" title="Hotel/Inn">
+                                            <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                            <i class="fa fa-bed fa-stack-1x"></i>
+                                        </span>
+                                    }
+                                    else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-place")
+                                    {
+                                        <span class="fa-stack text-primary" title="Location">
+                                            <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                            <i class="fa fa-street-view fa-stack-1x"></i>
+                                        </span>
+                                    }
+                                    @Html.DisplayFor(modelItem => events.title)
+                                    <br />
+                                    <b>@Html.DisplayFor(modelItem => events.description)</b>
+                                    <br />
+                                    <br />
+                                }
+                                <hr />
+                            }
+                        </div>
+                    </div>
+
+                    <p>
+                        Coupon:
+                        @if (Model.booking.couponCode != null)
+                        {
+                            if (ViewBag.DiscFlag == 0)
+                            {
+                                <b>@Html.DisplayFor(model => model.booking.couponCode)</b> @:(@ViewBag.DiscAmount% discount)
+                            }
+                            else if (ViewBag.DiscFlag == 1)
+                            {
+                                <b>@Html.DisplayFor(model => model.booking.couponCode)</b> @:(US$ @ViewBag.DiscAmount discount)
+                            }
+                            else
+                            {
+                                <b>-</b>
+                            }
+
+                        }
+                        else
+                        {
+                            <b>-</b>
+                        }
+                    </p>
+
+                    <p>Total Price: US$ <b id="priceTotal">@Html.DisplayFor(model => model.booking.totalPrice)</b> (@ViewBag.OriginalPrice - @ViewBag.DiscAmount)</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="panel-title">Person In Charge Information</div>
+                    </div>
+                    <div class="panel-body" style="word-wrap:break-word">
+                        <p>Name: <b>@Html.DisplayFor(model => model.picInfo.name)</b></p>
+                        <p>Address: <b>@Html.DisplayFor(model => model.picInfo.address)</b></p>
+                        <p>Telephone: <b>@Html.DisplayFor(model => model.picInfo.telephone)</b></p>
+                        <p>E-mail: <b>@Html.DisplayFor(model => model.picInfo.email)</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

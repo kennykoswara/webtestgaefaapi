@@ -1,0 +1,15 @@
+﻿@{
+    Layout = "~/Views/Shared/GaefaTemplate.cshtml";
+    ViewBag.Title = "WebTest - Test Send to Gaefa UI Api";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10">
+            <form role="form" method="post" action="@Url.Action("SendToGaefaUIApiPost","Gaefa")">
+                @Html.AntiForgeryToken()
+                <input type="submit" id="sendButton" class="btn btn-primary form-control" value="TEST SEND"/>
+            </form>
+        </div>
+    </div>
+</div>

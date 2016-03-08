@@ -1,0 +1,26 @@
+﻿@model WebTest.Controllers.GaefaController.BookCodeAndEmail
+
+@{
+    Layout = "~/Views/Shared/GaefaTemplate.cshtml";
+    ViewBag.Title = "WebTest - Please Confirm Your Transfer Payment";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well well-lg">
+                Your bookcode is <b>@Html.DisplayFor(model => model.bookCode)</b>
+                <p>An email contains this booking code has been sent to <b>@Html.DisplayFor(model => model.email)</b>.</p>
+            </div>
+            <div class="well well-sm">
+                <p>Press 'Confirm Now' if you wish to confirm your payment now, or you may confirm later via our 'Find Booking' section.</p>
+                <form method="post" action="@Url.Action("Transfer","Gaefa")">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="bookingCode" value="@Html.DisplayFor(model => model.bookCode)" />
+                    <input type="submit" class="form-control btn btn-primary" value="Confirm Now" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

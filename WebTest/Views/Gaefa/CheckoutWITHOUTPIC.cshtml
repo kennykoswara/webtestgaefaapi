@@ -1,0 +1,362 @@
+﻿@model WebTest.Models.GaefaPackage
+
+@{
+    ViewBag.Title = "WebTest - Checkout";
+    Layout = "~/Views/Shared/GaefaTemplate.cshtml";
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12" id="minimumPackAlert">
+
+        </div>
+    </div>
+    <form method="post" role="form" id="checkoutForm" action="@Url.Action("Payment","Gaefa")">
+        @Html.AntiForgeryToken()
+        <input type="hidden" id="tourID" name="tourID" value="@Html.DisplayFor(model => model.id)"/>
+        <div class="container-fluid">
+            <h1 class="text-center">Payment</h1>
+            <hr />
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    Choose Payment Method
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-6">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="payopt" data-target="#transferTab" checked value="Transfer" />Bank Transfer
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="payopt" data-target="#paypalTab" value="PayPal" />Paypal
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal Logo">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="radio-inline">
+                                    <input type="radio" name="payopt" data-target="#creditCardTab" value="CreditCard" />Credit Card
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <img src="http://www.credit-card-logos.com/images/visa_credit-card-logos/visa_mastercard_logo_5.gif" width="139" height="43" />
+                            </div>
+                        </div>
+                    </div>
+                        -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <div class="tab-content">
+                                    <div id="transferTab" class="tab-pane active">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <p>BCA</p>
+                                                <img src="http://placehold.it/100x75" />
+                                                <p>Account Number: <b>xxxxxx</b></p>
+                                                <p>On behalf of: <b>PT. xxxxxxxx</b></p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p>BNI</p>
+                                                <img src="http://placehold.it/100x75" />
+                                                <p>Account Number: <b>xxxxxx</b></p>
+                                                <p>On behalf of: <b>PT. xxxxxxxx</b></p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p>Mandiri</p>
+                                                <img src="http://placehold.it/100x75" />
+                                                <p>Account Number: <b>xxxxxx</b></p>
+                                                <p>On behalf of: <b>PT. xxxxxxxx</b></p>
+                                            </div>
+                                        </div>
+                                        <!--
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-success">Continue to confirmation page >></button>
+                        </div>
+                    </div>-->
+                                    </div>
+                                    <div id="paypalTab" class="tab-pane">
+                                        <div class="row">
+                                            <div class="col-md-12" style="color:red">
+                                                *Paypal charges additonal fee of US$ <b id="additionalFee"></b> for this package.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--
+                <div id="creditCardTab" class="tab-pane">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="nameCreditCard">Owner Name</label>
+                                <input type="text" class="form-control" id="nameCreditCard" placeholder="Your name in Credit Card" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="numberCreditCard">Credit Card Number</label>
+                                <input type="number" id="numberCreditCard" class="form-control" placeholder="Credit Card number" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="expiryCreditCard">Valid Until</label>
+                                <input type="month" id="expiryCreditCard" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="CVVCreditCard">CVV/CVV2 Number</label>
+                                <input type="number" min="000" max="999" id="CVVCreditCard" class="form-control" placeholder="CVV/CVV2 Number" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="countryCreditCard">Country issued</label>
+                                <input type="text" id="countryCreditCard" class="form-control" placeholder="Country which issued the Credit Card" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="submit" class="btn btn-success" value="Confirm payment >>" />
+                        </div>
+                    </div>
+                    -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="form-inline col-md-6">
+                                        <label for="tourDate">Tour Date: </label>
+                                        <input type="date" id="tourDate" name="tourDate" required class="form-control" min="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.ToString("dd")" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    Adult and Child
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <p>Adult: <b id="adultCount">0</b></p>
+                                        </div>
+                                        <div class="col-md-2" style="margin-top:0.5%">
+                                            <a href="javascript:void(0)"><span title="Add more adult" class="glyphicon glyphicon-plus-sign addAdult"></span></a>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" style="margin-top:1%">
+                                        <div class="col-md-12 adultList">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <p>Child: <b id="childCount">0</b></p>
+                                        </div>
+                                        <div class="col-md-2" style="margin-top:0.5%">
+                                            <a href="javascript:void(0)"><span title="Add more people" class="glyphicon glyphicon-plus-sign addChild"></span></a>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" style="margin-top:1%">
+                                        <div class="col-md-12 childList"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    @Html.DisplayFor(model => model.name)
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <p><b>Destination: @Html.DisplayFor(model => model.location)</b></p>
+                                <p>
+                                    <span id="showDateToGo" class="label label-danger"></span>
+                                </p>
+                                <p>
+                                    @if (Model.includeHotel)
+                                    {
+                                        <span class="fa-stack" title="Include Inn">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-home fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fa-stack" title="Not Include Inn">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-home fa-stack-1x fa-inverse"></i>
+                                            <i class="fa fa-ban fa-stack-2x text-danger"></i>
+                                        </span>
+                                    }
+
+                                    @if (Model.includeFlight)
+                                    {
+                                        <span class="fa-stack" title="Include Flight">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-plane fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fa-stack" title="Not Include Flight">
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-plane fa-stack-1x fa-inverse"></i>
+                                            <i class="fa fa-ban fa-stack-2x text-danger"></i>
+                                        </span>
+                                    }
+                                </p>
+                                <p>Minimum pack: <b id="minimumPack">@Html.DisplayFor(model => model.minimumPack)</b> pax</p>
+                                <hr />
+                                <b><u>Duration: @Html.DisplayFor(model => model.duration) day(s)</u></b>
+                                <a href="javascript:void(0)" id="showDayOnCheckout" class="pull-right" data-toggle="collapse" data-parent="false"><i class="fa fa-chevron-down"></i></a>
+                                <br />
+                                <div class="row panel-collapse collapse">
+                                    <div class="col-md-12" style="word-wrap:break-word">
+                                        @foreach (var days in Model.data.days)
+                                        {
+                                            <u><span>Day</span> @Html.DisplayFor(modelItem => days.dayNum)<span>:</span></u>
+                                            <br />
+                                            foreach (var events in days.events)
+                                            {
+                                                @:- (@Html.DisplayFor(modelItem => events.time))
+                                                <br />
+                                                if (Html.DisplayFor(modelItem => events.category).ToString() == "it-flight")
+                                                {
+                                                    <span class="fa-stack text-primary" title="Flight">
+                                                        <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                        <i class="fa fa-plane fa-stack-1x"></i>
+                                                    </span>
+                                                }
+                                                else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-food")
+                                                {
+                                                    <span class="fa-stack text-primary" title="Food">
+                                                        <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                        <i class="fa fa-cutlery fa-stack-1x"></i>
+                                                    </span>
+                                                }
+                                                else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-transport")
+                                                {
+                                                    <span class="fa-stack text-primary" title="Transport">
+                                                        <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                        <i class="fa fa-bus fa-stack-1x"></i>
+                                                    </span>
+                                                }
+                                                else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-inn")
+                                                {
+                                                    <span class="fa-stack text-primary" title="Hotel/Inn">
+                                                        <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                        <i class="fa fa-bed fa-stack-1x"></i>
+                                                    </span>
+                                                }
+                                                else if (Html.DisplayFor(modelItem => events.category).ToString() == "it-place")
+                                                {
+                                                    <span class="fa-stack text-primary" title="Location">
+                                                        <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                        <i class="fa fa-street-view fa-stack-1x"></i>
+                                                    </span>
+                                                }
+                                                @Html.DisplayFor(modelItem => events.title)
+                                                <br />
+                                                <b>@Html.DisplayFor(modelItem => events.description)</b>
+                                                <br />
+                                                <br />
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                                <hr />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="email">Email: <span style="font-size:xx-small">(This email will be used to confirm booking and other important stuffs.)</span></label>
+                                        <div class="form-group">
+                                            <input type="email" name="email" class="form-control" placeholder="Enter your email" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <p>Total People: <b id="peopleCount">0</b></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        Total Price: <b>US$ <span id="totalPrice">@Html.DisplayFor(model => model.pricePerPack)</span></b> (@@ US$ <span id="pricePerPax">@Html.DisplayFor(model => model.pricePerPack)</span>)
+                                        <input type="hidden" name="totalPrice" value="@Html.DisplayFor(model => model.pricePerPack)" />
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <div id="iconPayOpt"><i class='fa fa-credit-card' title="Pay by transfer"></i></div>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <input type="submit" id="checkoutCart" class="btn btn-xs btn-success" value="Continue Checkout >>" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
