@@ -51,27 +51,81 @@ namespace WebTest.Models
             SERVICE = new PayPalAPIInterfaceServiceService(SDK_CONFIG);
         }
 
-        public bool SetExpressCheckout(string destination, decimal price, int packageQuantity, string couponCode, int discPercentage)
+        public bool SetExpressCheckout(string destination, double priceAdult, double priceChild, double priceChildNoBed, int adultQuantity, int childQuantity, int childNoBedQuantity, string couponCode, decimal discPrice, int discFlag, int discPercentage, int discType)
         {
             PaymentDetailsType paymentDetail = new PaymentDetailsType();
             CurrencyCodeType currency = (CurrencyCodeType)EnumUtils.GetValue(CURRENCY_CODE, typeof(CurrencyCodeType));
-            PaymentDetailsItemType paymentItem = new PaymentDetailsItemType();
-            paymentItem.Name = "Tour Package to " + destination;
-            double itemAmount = decimal.ToDouble(price);
-            paymentItem.Amount = new BasicAmountType(currency, itemAmount.ToString());
-            int itemQuantity = packageQuantity;
-            paymentItem.Quantity = itemQuantity;
-            //double taxCharges = Math.Round((((itemAmount + 0.3) * 1000 / 961) - itemAmount), 2);
-            paymentItem.ItemCategory = (ItemCategoryType)EnumUtils.GetValue(ITEM_CATEGORY, typeof(ItemCategoryType));
-            double totalPrice = itemAmount * itemQuantity;
+            PaymentDetailsItemType paymentItemAdult = new PaymentDetailsItemType();
+            PaymentDetailsItemType paymentItemChild = new PaymentDetailsItemType();
+            PaymentDetailsItemType paymentItemChildNoBed = new PaymentDetailsItemType();
+
+            ///ADULT
+            if (adultQuantity > 0)
+            {
+                paymentItemAdult.Name = "Tour Package to " + destination + " - Adult";
+                double itemAmount = priceAdult;
+                paymentItemAdult.Amount = new BasicAmountType(currency, itemAmount.ToString());
+                int itemQuantity = adultQuantity;
+                paymentItemAdult.Quantity = itemQuantity;
+                //double taxCharges = Math.Round((((itemAmount + 0.3) * 1000 / 961) - itemAmount), 2);
+                paymentItemAdult.ItemCategory = (ItemCategoryType)EnumUtils.GetValue(ITEM_CATEGORY, typeof(ItemCategoryType));
+            }
+
+            ///CHILD
+            if (childQuantity > 0)
+            {
+                paymentItemChild.Name = "Tour Package to " + destination + " - Child";
+                double itemAmount = priceChild;
+                paymentItemChild.Amount = new BasicAmountType(currency, itemAmount.ToString());
+                int itemQuantity = childQuantity;
+                paymentItemChild.Quantity = itemQuantity;
+                //double taxCharges = Math.Round((((itemAmount + 0.3) * 1000 / 961) - itemAmount), 2);
+                paymentItemChild.ItemCategory = (ItemCategoryType)EnumUtils.GetValue(ITEM_CATEGORY, typeof(ItemCategoryType));
+            }
+
+            ///CHILDNOBED
+            if (childNoBedQuantity > 0)
+            {
+                paymentItemChildNoBed.Name = "Tour Package to " + destination + " - Child Without Bed";
+                double itemAmount = priceChildNoBed;
+                paymentItemChildNoBed.Amount = new BasicAmountType(currency, itemAmount.ToString());
+                int itemQuantity = childNoBedQuantity;
+                paymentItemChildNoBed.Quantity = itemQuantity;
+                //double taxCharges = Math.Round((((itemAmount + 0.3) * 1000 / 961) - itemAmount), 2);
+                paymentItemChildNoBed.ItemCategory = (ItemCategoryType)EnumUtils.GetValue(ITEM_CATEGORY, typeof(ItemCategoryType));
+            }
+
+            double totalPrice = (adultQuantity * priceAdult) + (childQuantity * priceChild) + (childNoBedQuantity * priceChildNoBed);
 
             ////COUPON DISCOUNT/////
             PaymentDetailsItemType discount = new PaymentDetailsItemType();
             double discountAmount = 0.00;
-            if (couponCode != "" || couponCode != null)
+            if (couponCode != "" || couponCode != null || discFlag == -1)
             {
-                discount.Name = "Coupon Discount - " + couponCode + " (" + discPercentage + "%)";
-                discountAmount = Math.Round(0.00 - (totalPrice * discPercentage / 100), 2, MidpointRounding.AwayFromZero);
+                if(discType == 0)
+                {
+                    if (discFlag == 0)
+                    {
+                        discount.Name = "Coupon Discount - " + couponCode + " (" + discPercentage + "%)";
+                    }
+                    else if (discFlag == 1)
+                    {
+                        discount.Name = "Coupon Discount - " + couponCode + " (US$ " + discPrice + ")";
+                    }
+                }
+                else
+                {
+                    if (discFlag == 0)
+                    {
+                        discount.Name = "Promo Discount - " + couponCode + " (" + discPercentage + "%)";
+                    }
+                    else if (discFlag == 1)
+                    {
+                        discount.Name = "Promo Discount - " + couponCode + " (US$ " + discPrice + ")";
+                    }
+                }
+                
+                discountAmount = Math.Round(0.00 - decimal.ToDouble(discPrice), 2, MidpointRounding.AwayFromZero);
                 discount.Amount = new BasicAmountType(currency, discountAmount.ToString());
                 int discQuantity = 1;
                 discount.Quantity = discQuantity;
@@ -91,7 +145,10 @@ namespace WebTest.Models
             
 
             List<PaymentDetailsItemType> paymentItems = new List<PaymentDetailsItemType>();
-            paymentItems.Add(paymentItem);
+            if(adultQuantity > 0) paymentItems.Add(paymentItemAdult);
+            if (childQuantity > 0) paymentItems.Add(paymentItemChild);
+            if (childNoBedQuantity > 0) paymentItems.Add(paymentItemChildNoBed);
+
             if (couponCode != null)
             {
                 paymentItems.Add(discount);
@@ -99,7 +156,7 @@ namespace WebTest.Models
             paymentItems.Add(tax);
             paymentDetail.PaymentDetailsItem = paymentItems;
             paymentDetail.PaymentAction = (PaymentActionCodeType)EnumUtils.GetValue(PAYMENT_ACTION_CODE, typeof(PaymentActionCodeType));
-            paymentDetail.OrderTotal = new BasicAmountType((CurrencyCodeType)EnumUtils.GetValue(CURRENCY_CODE, typeof(CurrencyCodeType)), ((itemAmount * itemQuantity) + discountAmount + taxAmount).ToString());
+            paymentDetail.OrderTotal = new BasicAmountType((CurrencyCodeType)EnumUtils.GetValue(CURRENCY_CODE, typeof(CurrencyCodeType)), (totalPrice + discountAmount + taxAmount).ToString());
             
 
             List<PaymentDetailsType> paymentDetails = new List<PaymentDetailsType>();

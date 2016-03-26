@@ -54,16 +54,19 @@
           <Property Name="status" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="childCount" Type="int" Nullable="false" />
           <Property Name="adultCount" Type="int" Nullable="false" />
+          <Property Name="childNoBedCount" Type="int" Nullable="false" />
           <Property Name="passengerAmount" Type="int" Nullable="false" />
           <Property Name="totalPrice" Type="decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="note" Type="nvarchar(max)" />
           <Property Name="couponCode" Type="varchar" MaxLength="20" />
+          <Property Name="promoCode" Type="varchar" MaxLength="100" />
+          <Property Name="postedToGaefa" Type="bit" Nullable="false" />
+          <Property Name="postedPassenger" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="gaefa_coupon">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="couponCode" />
           </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="couponCode" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="packMin" Type="int" />
           <Property Name="priceMin" Type="decimal" Precision="18" Scale="2" />
@@ -99,7 +102,6 @@
           <Property Name="paypalName" Type="varchar(max)" Nullable="false" />
           <Property Name="paypalAddress" Type="varchar(max)" Nullable="false" />
           <Property Name="paypalAmount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
-          <Property Name="postedToGaefa" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="gaefa_pic_info">
           <Key>
@@ -111,6 +113,27 @@
           <Property Name="address" Type="varchar(max)" Nullable="false" />
           <Property Name="telephone" Type="varchar(max)" Nullable="false" />
           <Property Name="email" Type="varchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="gaefa_promo">
+          <Key>
+            <PropertyRef Name="promoCode" />
+          </Key>
+          <Property Name="promoCode" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="packMin" Type="int" />
+          <Property Name="priceMin" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="expiryDate" Type="datetime" Nullable="false" />
+          <Property Name="availableDate" Type="datetime" Nullable="false" />
+          <Property Name="amount" Type="int" Nullable="false" />
+          <Property Name="used" Type="int" Nullable="false" />
+          <Property Name="discPercentage" Type="int" />
+          <Property Name="discPrice" Type="decimal" Precision="18" Scale="2" />
+        </EntityType>
+        <EntityType Name="gaefa_tag">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="tag" Type="varchar(max)" Nullable="false" />
         </EntityType>
         <EntityType Name="gaefa_transfer_info">
           <Key>
@@ -201,6 +224,7 @@
           <Property Name="fullname" Type="varchar(max)" Nullable="false" />
           <Property Name="email" Type="varchar(max)" Nullable="false" />
           <Property Name="password" Type="varchar(max)" Nullable="false" />
+          <Property Name="token" Type="varchar(max)" />
         </EntityType>
         <Association Name="FK_book_info_tour_info">
           <End Role="tour_info" Type="Self.tour_info" Multiplicity="1" />
@@ -226,9 +250,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <!--Errors Found During Generation:
-warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
-        <Association Name="FK_gaefa_book_new_gaefa_coupon" />-->
+        <Association Name="FK_gaefa_book_new_gaefa_coupon">
+          <End Role="gaefa_coupon" Type="Self.gaefa_coupon" Multiplicity="0..1" />
+          <End Role="gaefa_book_new" Type="Self.gaefa_book_new" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="gaefa_coupon">
+              <PropertyRef Name="couponCode" />
+            </Principal>
+            <Dependent Role="gaefa_book_new">
+              <PropertyRef Name="couponCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_gaefa_book_new_gaefa_promo">
+          <End Role="gaefa_promo" Type="Self.gaefa_promo" Multiplicity="0..1" />
+          <End Role="gaefa_book_new" Type="Self.gaefa_book_new" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="gaefa_promo">
+              <PropertyRef Name="promoCode" />
+            </Principal>
+            <Dependent Role="gaefa_book_new">
+              <PropertyRef Name="promoCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_gaefa_paypal_info_gaefa_book_info">
           <End Role="gaefa_book_info" Type="Self.gaefa_book_info" Multiplicity="1" />
           <End Role="gaefa_paypal_info" Type="Self.gaefa_paypal_info" Multiplicity="*" />
@@ -322,6 +367,8 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
           <EntitySet Name="gaefa_paypal_info" EntityType="Self.gaefa_paypal_info" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="gaefa_paypal_new" EntityType="Self.gaefa_paypal_new" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="gaefa_pic_info" EntityType="Self.gaefa_pic_info" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="gaefa_promo" EntityType="Self.gaefa_promo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="gaefa_tag" EntityType="Self.gaefa_tag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="gaefa_transfer_info" EntityType="Self.gaefa_transfer_info" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="gaefa_transfer_new" EntityType="Self.gaefa_transfer_new" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="password_confirmation" EntityType="Self.password_confirmation" Schema="dbo" store:Type="Tables" />
@@ -336,6 +383,14 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
           <AssociationSet Name="FK_book_info_user_info" Association="Self.FK_book_info_user_info">
             <End Role="user_info" EntitySet="user_info" />
             <End Role="book_info" EntitySet="book_info" />
+          </AssociationSet>
+          <AssociationSet Name="FK_gaefa_book_new_gaefa_coupon" Association="Self.FK_gaefa_book_new_gaefa_coupon">
+            <End Role="gaefa_coupon" EntitySet="gaefa_coupon" />
+            <End Role="gaefa_book_new" EntitySet="gaefa_book_new" />
+          </AssociationSet>
+          <AssociationSet Name="FK_gaefa_book_new_gaefa_promo" Association="Self.FK_gaefa_book_new_gaefa_promo">
+            <End Role="gaefa_promo" EntitySet="gaefa_promo" />
+            <End Role="gaefa_book_new" EntitySet="gaefa_book_new" />
           </AssociationSet>
           <AssociationSet Name="FK_gaefa_paypal_info_gaefa_book_info" Association="Self.FK_gaefa_paypal_info_gaefa_book_info">
             <End Role="gaefa_book_info" EntitySet="gaefa_book_info" />
@@ -389,11 +444,6 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
           </AssociationSet>
           <EntitySet Name="email_confirmation" EntityType="WebTestModel.email_confirmation" />
           <EntitySet Name="password_confirmation" EntityType="WebTestModel.password_confirmation" />
-          <EntitySet Name="user_info" EntityType="WebTestModel.user_info" />
-          <AssociationSet Name="FK_book_info_user_info" Association="WebTestModel.FK_book_info_user_info">
-            <End Role="user_info" EntitySet="user_info" />
-            <End Role="book_info" EntitySet="book_info" />
-          </AssociationSet>
           <EntitySet Name="gaefa_transfer_info" EntityType="WebTestModel.gaefa_transfer_info" />
           <EntitySet Name="gaefa_book_info" EntityType="WebTestModel.gaefa_book_info" />
           <AssociationSet Name="FK_gaefa_transfer_info_gaefa_book_info" Association="WebTestModel.FK_gaefa_transfer_info_gaefa_book_info">
@@ -406,9 +456,24 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
             <End Role="gaefa_paypal_info" EntitySet="gaefa_paypal_info" />
           </AssociationSet>
           <EntitySet Name="gaefa_pic_info" EntityType="WebTestModel.gaefa_pic_info" />
-          <EntitySet Name="gaefa_book_new" EntityType="WebTestModel.gaefa_book_new" />
-          <EntitySet Name="gaefa_paypal_new" EntityType="WebTestModel.gaefa_paypal_new" />
           <EntitySet Name="gaefa_transfer_new" EntityType="WebTestModel.gaefa_transfer_new" />
+          <EntitySet Name="gaefa_coupon" EntityType="WebTestModel.gaefa_coupon" />
+          <EntitySet Name="gaefa_promo" EntityType="WebTestModel.gaefa_promo" />
+          <EntitySet Name="user_info" EntityType="WebTestModel.user_info" />
+          <AssociationSet Name="FK_book_info_user_info" Association="WebTestModel.FK_book_info_user_info">
+            <End Role="user_info" EntitySet="user_info" />
+            <End Role="book_info" EntitySet="book_info" />
+          </AssociationSet>
+          <EntitySet Name="gaefa_paypal_new" EntityType="WebTestModel.gaefa_paypal_new" />
+          <EntitySet Name="gaefa_book_new" EntityType="WebTestModel.gaefa_book_new" />
+          <AssociationSet Name="FK_gaefa_book_new_gaefa_coupon" Association="WebTestModel.FK_gaefa_book_new_gaefa_coupon">
+            <End Role="gaefa_coupon" EntitySet="gaefa_coupon" />
+            <End Role="gaefa_book_new" EntitySet="gaefa_book_new" />
+          </AssociationSet>
+          <AssociationSet Name="FK_gaefa_book_new_gaefa_promo" Association="WebTestModel.FK_gaefa_book_new_gaefa_promo">
+            <End Role="gaefa_promo" EntitySet="gaefa_promo" />
+            <End Role="gaefa_book_new" EntitySet="gaefa_book_new" />
+          </AssociationSet>
           <AssociationSet Name="FK_gaefa_paypal_new_gaefa_book_new" Association="WebTestModel.FK_gaefa_paypal_new_gaefa_book_new">
             <End Role="gaefa_book_new" EntitySet="gaefa_book_new" />
             <End Role="gaefa_paypal_new" EntitySet="gaefa_paypal_new" />
@@ -421,7 +486,7 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
             <End Role="gaefa_book_new" EntitySet="gaefa_book_new" />
             <End Role="gaefa_transfer_new" EntitySet="gaefa_transfer_new" />
           </AssociationSet>
-          <EntitySet Name="gaefa_coupon" EntityType="WebTestModel.gaefa_coupon" />
+          <EntitySet Name="gaefa_tag" EntityType="WebTestModel.gaefa_tag" />
           </EntityContainer>
         <EntityType Name="book_info">
           <Key>
@@ -535,28 +600,6 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
           <Property Name="email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="token" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="user_info">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="fullname" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="password" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="book_info" Relationship="WebTestModel.FK_book_info_user_info" FromRole="user_info" ToRole="book_info" />
-        </EntityType>
-        <Association Name="FK_book_info_user_info">
-          <End Type="WebTestModel.user_info" Role="user_info" Multiplicity="1" />
-          <End Type="WebTestModel.book_info" Role="book_info" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="user_info">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="book_info">
-              <PropertyRef Name="buyerID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="gaefa_transfer_info">
           <Key>
             <PropertyRef Name="paymentCode" />
@@ -642,42 +685,6 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
           <Property Name="email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="gaefa_book_new" Relationship="WebTestModel.FK_gaefa_pic_info_gaefa_book_new" FromRole="gaefa_pic_info" ToRole="gaefa_book_new" />
         </EntityType>
-        <EntityType Name="gaefa_book_new">
-          <Key>
-            <PropertyRef Name="bookCode" />
-          </Key>
-          <Property Name="bookCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="dateToGo" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="orderReference" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="dateOrder" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="tourID" Type="Int32" Nullable="false" />
-          <Property Name="paymentMethod" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="childCount" Type="Int32" Nullable="false" />
-          <Property Name="adultCount" Type="Int32" Nullable="false" />
-          <Property Name="passengerAmount" Type="Int32" Nullable="false" />
-          <Property Name="totalPrice" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="couponCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="gaefa_paypal_new" Relationship="WebTestModel.FK_gaefa_paypal_new_gaefa_book_new" FromRole="gaefa_book_new" ToRole="gaefa_paypal_new" />
-          <NavigationProperty Name="gaefa_pic_info" Relationship="WebTestModel.FK_gaefa_pic_info_gaefa_book_new" FromRole="gaefa_book_new" ToRole="gaefa_pic_info" />
-          <NavigationProperty Name="gaefa_transfer_new" Relationship="WebTestModel.FK_gaefa_transfer_new_gaefa_book_new" FromRole="gaefa_book_new" ToRole="gaefa_transfer_new" />
-        </EntityType>
-        <EntityType Name="gaefa_paypal_new">
-          <Key>
-            <PropertyRef Name="paypalTransactionID" />
-          </Key>
-          <Property Name="paypalTransactionID" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="bookCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="paypalDateAndTime" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="paypalPayerID" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="paypalName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="paypalAddress" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="paypalAmount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="postedToGaefa" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="gaefa_book_new" Relationship="WebTestModel.FK_gaefa_paypal_new_gaefa_book_new" FromRole="gaefa_paypal_new" ToRole="gaefa_book_new" />
-        </EntityType>
         <EntityType Name="gaefa_transfer_new">
           <Key>
             <PropertyRef Name="paymentCode" />
@@ -695,6 +702,124 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
           <Property Name="receipt" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="gaefa_book_new" Relationship="WebTestModel.FK_gaefa_transfer_new_gaefa_book_new" FromRole="gaefa_transfer_new" ToRole="gaefa_book_new" />
         </EntityType>
+        <EntityType Name="gaefa_coupon">
+          <Key>
+            <PropertyRef Name="couponCode" />
+          </Key>
+          <Property Name="couponCode" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="packMin" Type="Int32" />
+          <Property Name="priceMin" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="expiryDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="availableDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <Property Name="usedDate" Type="DateTime" Precision="3" />
+          <Property Name="discPercentage" Type="Int32" />
+          <Property Name="discPrice" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="gaefa_book_new" Relationship="WebTestModel.FK_gaefa_book_new_gaefa_coupon" FromRole="gaefa_coupon" ToRole="gaefa_book_new" />
+        </EntityType>
+        <EntityType Name="gaefa_promo">
+          <Key>
+            <PropertyRef Name="promoCode" />
+          </Key>
+          <Property Name="promoCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="packMin" Type="Int32" />
+          <Property Name="priceMin" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="expiryDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="availableDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="amount" Type="Int32" Nullable="false" />
+          <Property Name="used" Type="Int32" Nullable="false" />
+          <Property Name="discPercentage" Type="Int32" />
+          <Property Name="discPrice" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="gaefa_book_new" Relationship="WebTestModel.FK_gaefa_book_new_gaefa_promo" FromRole="gaefa_promo" ToRole="gaefa_book_new" />
+        </EntityType>
+        <EntityType Name="user_info">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fullname" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="book_info" Relationship="WebTestModel.FK_book_info_user_info" FromRole="user_info" ToRole="book_info" />
+        </EntityType>
+        <Association Name="FK_book_info_user_info">
+          <End Type="WebTestModel.user_info" Role="user_info" Multiplicity="1" />
+          <End Type="WebTestModel.book_info" Role="book_info" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user_info">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="book_info">
+              <PropertyRef Name="buyerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="gaefa_paypal_new">
+          <Key>
+            <PropertyRef Name="paypalTransactionID" />
+          </Key>
+          <Property Name="paypalTransactionID" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="bookCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="paypalDateAndTime" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="paypalPayerID" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="paypalName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="paypalAddress" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="paypalAmount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <NavigationProperty Name="gaefa_book_new" Relationship="WebTestModel.FK_gaefa_paypal_new_gaefa_book_new" FromRole="gaefa_paypal_new" ToRole="gaefa_book_new" />
+        </EntityType>
+        <EntityType Name="gaefa_book_new">
+          <Key>
+            <PropertyRef Name="bookCode" />
+          </Key>
+          <Property Name="bookCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="dateToGo" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="orderReference" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="dateOrder" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="tourID" Type="Int32" Nullable="false" />
+          <Property Name="paymentMethod" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="childCount" Type="Int32" Nullable="false" />
+          <Property Name="adultCount" Type="Int32" Nullable="false" />
+          <Property Name="childNoBedCount" Type="Int32" Nullable="false" />
+          <Property Name="passengerAmount" Type="Int32" Nullable="false" />
+          <Property Name="totalPrice" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="couponCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="promoCode" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="postedToGaefa" Type="Boolean" Nullable="false" />
+          <Property Name="postedPassenger" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="gaefa_coupon" Relationship="WebTestModel.FK_gaefa_book_new_gaefa_coupon" FromRole="gaefa_book_new" ToRole="gaefa_coupon" />
+          <NavigationProperty Name="gaefa_promo" Relationship="WebTestModel.FK_gaefa_book_new_gaefa_promo" FromRole="gaefa_book_new" ToRole="gaefa_promo" />
+          <NavigationProperty Name="gaefa_paypal_new" Relationship="WebTestModel.FK_gaefa_paypal_new_gaefa_book_new" FromRole="gaefa_book_new" ToRole="gaefa_paypal_new" />
+          <NavigationProperty Name="gaefa_pic_info" Relationship="WebTestModel.FK_gaefa_pic_info_gaefa_book_new" FromRole="gaefa_book_new" ToRole="gaefa_pic_info" />
+          <NavigationProperty Name="gaefa_transfer_new" Relationship="WebTestModel.FK_gaefa_transfer_new_gaefa_book_new" FromRole="gaefa_book_new" ToRole="gaefa_transfer_new" />
+        </EntityType>
+        <Association Name="FK_gaefa_book_new_gaefa_coupon">
+          <End Type="WebTestModel.gaefa_coupon" Role="gaefa_coupon" Multiplicity="0..1" />
+          <End Type="WebTestModel.gaefa_book_new" Role="gaefa_book_new" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="gaefa_coupon">
+              <PropertyRef Name="couponCode" />
+            </Principal>
+            <Dependent Role="gaefa_book_new">
+              <PropertyRef Name="couponCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_gaefa_book_new_gaefa_promo">
+          <End Type="WebTestModel.gaefa_promo" Role="gaefa_promo" Multiplicity="0..1" />
+          <End Type="WebTestModel.gaefa_book_new" Role="gaefa_book_new" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="gaefa_promo">
+              <PropertyRef Name="promoCode" />
+            </Principal>
+            <Dependent Role="gaefa_book_new">
+              <PropertyRef Name="promoCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_gaefa_paypal_new_gaefa_book_new">
           <End Type="WebTestModel.gaefa_book_new" Role="gaefa_book_new" Multiplicity="1" />
           <End Type="WebTestModel.gaefa_paypal_new" Role="gaefa_paypal_new" Multiplicity="*" />
@@ -731,20 +856,12 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="gaefa_coupon">
+        <EntityType Name="gaefa_tag">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="couponCode" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="packMin" Type="Int32" />
-          <Property Name="priceMin" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="expiryDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="availableDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="status" Type="Boolean" Nullable="false" />
-          <Property Name="usedDate" Type="DateTime" Precision="3" />
-          <Property Name="discPercentage" Type="Int32" />
-          <Property Name="discPrice" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="tag" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -827,16 +944,6 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="user_info">
-            <EntityTypeMapping TypeName="WebTestModel.user_info">
-              <MappingFragment StoreEntitySet="user_info">
-                <ScalarProperty Name="password" ColumnName="password" />
-                <ScalarProperty Name="email" ColumnName="email" />
-                <ScalarProperty Name="fullname" ColumnName="fullname" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="gaefa_transfer_info">
             <EntityTypeMapping TypeName="WebTestModel.gaefa_transfer_info">
               <MappingFragment StoreEntitySet="gaefa_transfer_info">
@@ -897,40 +1004,6 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="gaefa_book_new">
-            <EntityTypeMapping TypeName="WebTestModel.gaefa_book_new">
-              <MappingFragment StoreEntitySet="gaefa_book_new">
-                <ScalarProperty Name="couponCode" ColumnName="couponCode" />
-                <ScalarProperty Name="note" ColumnName="note" />
-                <ScalarProperty Name="totalPrice" ColumnName="totalPrice" />
-                <ScalarProperty Name="passengerAmount" ColumnName="passengerAmount" />
-                <ScalarProperty Name="adultCount" ColumnName="adultCount" />
-                <ScalarProperty Name="childCount" ColumnName="childCount" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="paymentMethod" ColumnName="paymentMethod" />
-                <ScalarProperty Name="tourID" ColumnName="tourID" />
-                <ScalarProperty Name="dateOrder" ColumnName="dateOrder" />
-                <ScalarProperty Name="orderReference" ColumnName="orderReference" />
-                <ScalarProperty Name="dateToGo" ColumnName="dateToGo" />
-                <ScalarProperty Name="email" ColumnName="email" />
-                <ScalarProperty Name="bookCode" ColumnName="bookCode" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="gaefa_paypal_new">
-            <EntityTypeMapping TypeName="WebTestModel.gaefa_paypal_new">
-              <MappingFragment StoreEntitySet="gaefa_paypal_new">
-                <ScalarProperty Name="postedToGaefa" ColumnName="postedToGaefa" />
-                <ScalarProperty Name="paypalAmount" ColumnName="paypalAmount" />
-                <ScalarProperty Name="paypalAddress" ColumnName="paypalAddress" />
-                <ScalarProperty Name="paypalName" ColumnName="paypalName" />
-                <ScalarProperty Name="paypalPayerID" ColumnName="paypalPayerID" />
-                <ScalarProperty Name="paypalDateAndTime" ColumnName="paypalDateAndTime" />
-                <ScalarProperty Name="bookCode" ColumnName="bookCode" />
-                <ScalarProperty Name="paypalTransactionID" ColumnName="paypalTransactionID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="gaefa_transfer_new">
             <EntityTypeMapping TypeName="WebTestModel.gaefa_transfer_new">
               <MappingFragment StoreEntitySet="gaefa_transfer_new">
@@ -960,6 +1033,76 @@ warning 6035: The relationship 'FK_gaefa_book_new_gaefa_coupon' has columns that
                 <ScalarProperty Name="priceMin" ColumnName="priceMin" />
                 <ScalarProperty Name="packMin" ColumnName="packMin" />
                 <ScalarProperty Name="couponCode" ColumnName="couponCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gaefa_promo">
+            <EntityTypeMapping TypeName="WebTestModel.gaefa_promo">
+              <MappingFragment StoreEntitySet="gaefa_promo">
+                <ScalarProperty Name="discPrice" ColumnName="discPrice" />
+                <ScalarProperty Name="discPercentage" ColumnName="discPercentage" />
+                <ScalarProperty Name="used" ColumnName="used" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="availableDate" ColumnName="availableDate" />
+                <ScalarProperty Name="expiryDate" ColumnName="expiryDate" />
+                <ScalarProperty Name="priceMin" ColumnName="priceMin" />
+                <ScalarProperty Name="packMin" ColumnName="packMin" />
+                <ScalarProperty Name="promoCode" ColumnName="promoCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="user_info">
+            <EntityTypeMapping TypeName="WebTestModel.user_info">
+              <MappingFragment StoreEntitySet="user_info">
+                <ScalarProperty Name="token" ColumnName="token" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="fullname" ColumnName="fullname" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gaefa_paypal_new">
+            <EntityTypeMapping TypeName="WebTestModel.gaefa_paypal_new">
+              <MappingFragment StoreEntitySet="gaefa_paypal_new">
+                <ScalarProperty Name="paypalAmount" ColumnName="paypalAmount" />
+                <ScalarProperty Name="paypalAddress" ColumnName="paypalAddress" />
+                <ScalarProperty Name="paypalName" ColumnName="paypalName" />
+                <ScalarProperty Name="paypalPayerID" ColumnName="paypalPayerID" />
+                <ScalarProperty Name="paypalDateAndTime" ColumnName="paypalDateAndTime" />
+                <ScalarProperty Name="bookCode" ColumnName="bookCode" />
+                <ScalarProperty Name="paypalTransactionID" ColumnName="paypalTransactionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gaefa_book_new">
+            <EntityTypeMapping TypeName="WebTestModel.gaefa_book_new">
+              <MappingFragment StoreEntitySet="gaefa_book_new">
+                <ScalarProperty Name="postedPassenger" ColumnName="postedPassenger" />
+                <ScalarProperty Name="postedToGaefa" ColumnName="postedToGaefa" />
+                <ScalarProperty Name="promoCode" ColumnName="promoCode" />
+                <ScalarProperty Name="couponCode" ColumnName="couponCode" />
+                <ScalarProperty Name="note" ColumnName="note" />
+                <ScalarProperty Name="totalPrice" ColumnName="totalPrice" />
+                <ScalarProperty Name="passengerAmount" ColumnName="passengerAmount" />
+                <ScalarProperty Name="childNoBedCount" ColumnName="childNoBedCount" />
+                <ScalarProperty Name="adultCount" ColumnName="adultCount" />
+                <ScalarProperty Name="childCount" ColumnName="childCount" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="paymentMethod" ColumnName="paymentMethod" />
+                <ScalarProperty Name="tourID" ColumnName="tourID" />
+                <ScalarProperty Name="dateOrder" ColumnName="dateOrder" />
+                <ScalarProperty Name="orderReference" ColumnName="orderReference" />
+                <ScalarProperty Name="dateToGo" ColumnName="dateToGo" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="bookCode" ColumnName="bookCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gaefa_tag">
+            <EntityTypeMapping TypeName="WebTestModel.gaefa_tag">
+              <MappingFragment StoreEntitySet="gaefa_tag">
+                <ScalarProperty Name="tag" ColumnName="tag" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>

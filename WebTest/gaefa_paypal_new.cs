@@ -21,7 +21,6 @@ namespace WebTest
         public string paypalName { get; set; }
         public string paypalAddress { get; set; }
         public decimal paypalAmount { get; set; }
-        public bool postedToGaefa { get; set; }
     
         public virtual gaefa_book_new gaefa_book_new { get; set; }
     }

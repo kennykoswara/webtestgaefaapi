@@ -12,7 +12,7 @@ namespace WebTest.Security
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             HttpContext ctx = HttpContext.Current;
-            // check  sessions here
+            //To only allow admin to access the function
             if (HttpContext.Current.Session[GlobalVar.SESSION_NAME] == null)
             {
                 filterContext.Result = new RedirectResult("~/Home/Index");

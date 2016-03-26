@@ -2,8 +2,8 @@
 @using WebTest.PortalList
 
 @{
-    ViewBag.Title = "WebTest - List";
-    Layout = "~/Views/Shared/GaefaTemplate.cshtml";
+    ViewBag.Title = "WebTest - Package List";
+    Layout = "~/Views/Shared/CleanTemplate.cshtml";
 
     GaefaPackageSort sort = ViewBag.sort;
     GaefaFilter filter = ViewBag.filter;
@@ -23,7 +23,7 @@
         </div>
         <br/>
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-2 col-sm-3 col-xs-3">
                 <label for="flight">Flight: </label>
                 <select class="form-control" name="flight" onchange="this.form.submit()">
                     <option value="" @((filter.include_flight == null) ? "selected" : "")>---</option>
@@ -31,7 +31,7 @@
                     <option value="false" @((filter.include_flight == false) ? "selected" : "")>No</option>
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 col-sm-3 col-xs-3">
                 <label for="inn">Inn: </label>
                 <select class="form-control" name="inn" onchange="this.form.submit()">
                     <option value="" @((filter.include_inn == null) ? "selected" : "")>---</option>
@@ -42,7 +42,7 @@
         </div>
         <hr/>
         <div class="row" style="margin-bottom: 1%">
-            <div class="col-md-6">
+            <div class="col-md-6 col-xs-6 col-sm-6">
                 <label for="sortType">Sort by:</label>
                 <select class="form-control" name="sortType" onchange="this.form.submit();">
                     <option value="@GaefaPackageSort.sort_type.cdate" @((sort.sortType == GaefaPackageSort.sort_type.cdate) ? "selected" : "")>Date Created</option>
@@ -52,7 +52,7 @@
                     <option value="@GaefaPackageSort.sort_type.title" @((sort.sortType == GaefaPackageSort.sort_type.title) ? "selected" : "")>Title</option>
                 </select>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 col-xs-6 col-sm-6 col-md-pull-3">
                 <label for="sortMode">Order By:</label>
                 <select class="form-control" name="sortMode" onchange="this.form.submit();">
                     <option value="@GaefaPackageSort.sort_mode.ASCENDING" @((sort.sortMode == GaefaPackageSort.sort_mode.ASCENDING) ? "selected" : "")>Ascending</option>
@@ -76,15 +76,38 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <span class="label label-primary">@Html.DisplayFor(modelItem => Model.ElementAt(i).startDate)</span>
-                    ~
-                    <span class="label label-primary">@Html.DisplayFor(modelItem => Model.ElementAt(i).endDate)</span>
+                    @if (Model.ElementAt(i).selectedDate != null)
+                    {
+                        <span class="label label-primary">@Model.ElementAt(i).selectedDate.dateList.ElementAt(0).date.Substring(0,10)</span>
+                        @:~
+                        <span class="label label-primary">@Model.ElementAt(i).selectedDate.dateList.ElementAt(Model.ElementAt(i).selectedDate.dateList.Count - 1).date.Substring(0,10)</span>
+                    }
+                    else {
+                        <span class="label label-primary">@Model.ElementAt(i).rangedDate.start_date.Substring(0,10)</span>
+                        @:~
+                        <span class="label label-primary">@Model.ElementAt(i).rangedDate.end_date.Substring(0, 10)</span>
+                    }
                     <br />
                     Destination: <b>@Html.DisplayFor(modelItem => Model.ElementAt(i).location)</b>
                     <br />
-                    Price: <b>US$ @Html.DisplayFor(modelItem => Model.ElementAt(i).pricePerPack)</b>
+                    Adult Price: <b>US$ @Html.DisplayFor(modelItem => Model.ElementAt(i).priceAdult)</b>
                     <br />
-                    Minimum Pack: <b>@Html.DisplayFor(modelItem => Model.ElementAt(i).minimumPack)</b> pax
+                    Child Price: <b>US$ @Html.DisplayFor(modelItem => Model.ElementAt(i).priceChild)</b>
+                    <br />
+                    Child No Bed Price: <b>US$ @Html.DisplayFor(modelItem => Model.ElementAt(i).priceChildNoBed)</b>
+                    <br />
+                    @if (Model.ElementAt(i).selectedDate != null)
+                    {
+                        @:Minimum Pack: <b>1</b> pax
+                        <br/>
+                        @:Maximum Pack: <b>May vary based on date</b>
+                    }
+                    else
+                    {
+                        @:Minimum Pack: <b>@Html.DisplayFor(modelItem => Model.ElementAt(i).rangedDate.minimum_pack)</b> pax
+                        <br/>
+                        @:Maximum Pack: <b>@Html.DisplayFor(modelItem => Model.ElementAt(i).rangedDate.maximum_pack)</b> pax
+                    }
                     <br />
                     Duration: <b>@Html.DisplayFor(modelItem => Model.ElementAt(i).duration)</b> day(s)
                     <br/>
@@ -145,7 +168,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    
-</script>

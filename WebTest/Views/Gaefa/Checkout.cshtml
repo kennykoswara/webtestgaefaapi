@@ -5,10 +5,14 @@
     Layout = "~/Views/Shared/GaefaTemplate.cshtml";
 }
 
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12" id="minimumPackAlert">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" id="maximumPackAlert">
 
         </div>
     </div>
@@ -54,22 +58,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--
-                    <div class="col-md-4">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="radio-inline">
-                                    <input type="radio" name="payopt" data-target="#creditCardTab" value="CreditCard" />Credit Card
-                                </label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <img src="http://www.credit-card-logos.com/images/visa_credit-card-logos/visa_mastercard_logo_5.gif" width="139" height="43" />
-                            </div>
-                        </div>
-                    </div>
-                        -->
                                     </div>
                                 </div>
                             </div>
@@ -96,12 +84,6 @@
                                                 <p>On behalf of: <b>PT. xxxxxxxx</b></p>
                                             </div>
                                         </div>
-                                        <!--
-                    <div class="row">
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-success">Continue to confirmation page >></button>
-                        </div>
-                    </div>-->
                                     </div>
                                     <div id="paypalTab" class="tab-pane">
                                         <div class="row">
@@ -110,48 +92,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!--
-                <div id="creditCardTab" class="tab-pane">
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="nameCreditCard">Owner Name</label>
-                                <input type="text" class="form-control" id="nameCreditCard" placeholder="Your name in Credit Card" />
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="numberCreditCard">Credit Card Number</label>
-                                <input type="number" id="numberCreditCard" class="form-control" placeholder="Credit Card number" />
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="expiryCreditCard">Valid Until</label>
-                                <input type="month" id="expiryCreditCard" class="form-control" />
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="CVVCreditCard">CVV/CVV2 Number</label>
-                                <input type="number" min="000" max="999" id="CVVCreditCard" class="form-control" placeholder="CVV/CVV2 Number" />
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="countryCreditCard">Country issued</label>
-                                <input type="text" id="countryCreditCard" class="form-control" placeholder="Country which issued the Credit Card" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <input type="submit" class="btn btn-success" value="Confirm payment >>" />
-                        </div>
-                    </div>
-                    -->
                                 </div>
                             </div>
                         </div>
@@ -165,7 +105,29 @@
                                 <div class="row">
                                     <div class="form-inline col-md-6">
                                         <label for="tourDate">Tour Date: </label>
-                                        <input type="date" id="tourDate" name="tourDate" required class="form-control" min="@DateTime.Now.Year-@DateTime.Now.ToString("MM")-@DateTime.Now.ToString("dd")" max="@Html.DisplayFor(model => model.endDate)"/>
+                                        <input id="tourDate" name="tourDate" class="form-control" value=""/>
+                                        @if(Model.selectedDate != null)
+                                        {
+                                            foreach(var item in Model.selectedDate.dateList)
+                                            {
+                                                <input class="dateEnabled" type="hidden" value="@item.date"/>
+                                                <input class="maxPassAllowed" type="hidden" value="@item.total_maximum_passenger" />
+                                            }
+                                        }
+                                        @if(Model.rangedDate != null)
+                                        {
+                                            <input type="hidden" name="startDate" id="rangedStartDate" value="@Model.rangedDate.start_date" />
+                                            <input type="hidden" name="isMonday" id="isMonday" value="@Model.rangedDate.is_monday.ToString()" />
+                                            <input type="hidden" name="isTuesday" id="isTuesday" value="@Model.rangedDate.is_tuesday.ToString()" />
+                                            <input type="hidden" name="isWednesday" id="isWednesday" value="@Model.rangedDate.is_wednesday.ToString()" />
+                                            <input type="hidden" name="isThrusday" id="isThursday" value="@Model.rangedDate.is_thursday.ToString()" />
+                                            <input type="hidden" name="isFriday" id="isFriday" value="@Model.rangedDate.is_friday.ToString()" />
+                                            <input type="hidden" name="isSaturday" id="isSaturday" value="@Model.rangedDate.is_saturday.ToString()" />
+                                            <input type="hidden" name="isSunday" id="isSunday" value="@Model.rangedDate.is_sunday.ToString()" />
+                                            <input type="hidden" name="endDate" id="rangedEndDate" value="@Model.rangedDate.end_date" />
+                                            <input type="hidden" name="minimumPack" id="rangedMinimumPack" value="@Model.rangedDate.minimum_pack" />
+                                            <input type="hidden" name="maximumPack" id="rangedMaximumPack" value="@Model.rangedDate.maximum_pack" />
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -253,7 +215,17 @@
                                         </span>
                                     }
                                 </p>
-                                <p>Minimum pack: <b id="minimumPack">@Html.DisplayFor(model => model.minimumPack)</b> pax</p>
+                                @if (Model.selectedDate != null)
+                                {
+                                    <p>Minimum pack: <b>1</b> pax</p>
+                                    <p>Maximum pack: <b id="selectedMaximumPack">-</b> pax</p>
+                                }
+                                else
+                                {
+                                    <p>Minimum pack: <b>@Html.DisplayFor(model => model.rangedDate.minimum_pack)</b> pax</p>
+                                    <p>Maximum pack: <b>@Html.DisplayFor(model => model.rangedDate.maximum_pack)</b> pax</p>
+                                }
+
                                 <hr />
                                 <b><u>Duration: @Html.DisplayFor(model => model.duration) day(s)</u></b>
                                 <a href="javascript:void(0)" id="showDayOnCheckout" class="pull-right" data-toggle="collapse" data-parent="false"><i class="fa fa-chevron-down"></i></a>
@@ -320,14 +292,21 @@
                                         <input type="hidden" name="peopleCount" value="" />
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-4 col-xs-6 col-sm-6 form-inline">
+                                <div class="row form-horizontal">
+                                    <div class="col-md-4 col-xs-4 col-sm-4">
                                         <label for="adult">Adult: </label>
-                                        <input type="number" min="0" max="999" name="adult" class="form-control" value="" placeholder="0" style="max-width:50%"/>
+                                        <input type="number" min="0" max="999" name="adult" class="form-control" value="" placeholder="0" style="max-width:100%"/>
+                                        <input type="hidden" id="priceAdult" value="@Html.DisplayFor(model => model.priceAdult)" />
                                     </div>
-                                    <div class="col-md-4 col-xs-6 col-sm-6 form-inline">
+                                    <div class="col-md-4 col-xs-4 col-sm-4 col-xs-pull-1">
                                         <label for="child">Child: </label>
-                                        <input type="number" min="0" max="999" name="child" class="form-control" value="" placeholder="0" style="max-width:50%" />
+                                        <input type="number" min="0" max="999" name="child" class="form-control" value="" placeholder="0" style="max-width:100%" />
+                                        <input type="hidden" id="priceChild" value="@Html.DisplayFor(model => model.priceChild)" />
+                                    </div>
+                                    <div class="col-md-4 col-xs-4 col-sm-4 col-xs-pull-2">
+                                        <label for="child">Child No Bed: </label>
+                                        <input type="number" min="0" max="999" name="childNoBed" class="form-control" value="" placeholder="0" style="max-width:100%" />
+                                        <input type="hidden" id="priceChildNoBed" value="@Html.DisplayFor(model => model.priceChildNoBed)" />
                                     </div>
                                 </div>
                                 <br/>
@@ -335,11 +314,8 @@
                                     <div class="col-md-12 col-xs-12 col-sm-12">
                                         <div class="input-group">
                                             <span class="input-group-addon" id="couponLogo"><span class="text-info"><i class="fa fa-ticket fa-spin"></i></span></span>
-                                            @*<span class="input-group-addon"><span class="text-success"><i class="fa fa-check-circle"></i></span></span>*@
-                                            <span class="input-group-addon">Coupon: </span>
-                                            <input type="text" class="form-control" name="couponDisc" value="" placeholder="Type your discount coupon here" />
-                                            <span class="input-group-btn" id="dynamicCouponButton"><button id="addCoupon" class="btn btn-primary">Add Coupon</button></span>
-                                            @*<input type="hidden" name="couponCode" value="" />*@
+                                            <input type="text" class="form-control" name="couponDisc" value="" style="text-transform: uppercase" placeholder="Type your discount code here" />
+                                            <span class="input-group-btn" id="dynamicCouponButton"><button id="addCoupon" class="btn btn-primary">Add Code</button></span>
                                         </div>
                                     </div>
                                 </div>
@@ -354,12 +330,7 @@
                                     <div class="col-md-7">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                Ticket Price: <b>US$ <span id="ticketPrice">@Html.DisplayFor(model => model.pricePerPack)</span></b> (@@ US$ <span id="pricePerPax">@Html.DisplayFor(model => model.pricePerPack)</span>)
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                PayPal Additional Charge: <b>US$ <span id="taxPrice"></span></b>
+                                                Ticket Price: <b>US$ <span id="ticketPrice">0.00</span></b>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -369,8 +340,13 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
+                                                PayPal Additional Charge: <b>US$ <span id="taxPrice"></span></b>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
                                                 Total Price: <b>US$ <span id="totalPrice"></span></b>
-                                                <input type="hidden" name="totalPrice" value="@Html.DisplayFor(model => model.pricePerPack)" />
+                                                <input type="hidden" name="totalPrice" value="0.00" />
                                             </div>
                                         </div>
                                         

@@ -31,14 +31,16 @@ namespace WebTest
         public virtual DbSet<transfer_info> transfer_info { get; set; }
         public virtual DbSet<email_confirmation> email_confirmation { get; set; }
         public virtual DbSet<password_confirmation> password_confirmation { get; set; }
-        public virtual DbSet<user_info> user_info { get; set; }
         public virtual DbSet<gaefa_transfer_info> gaefa_transfer_info { get; set; }
         public virtual DbSet<gaefa_book_info> gaefa_book_info { get; set; }
         public virtual DbSet<gaefa_paypal_info> gaefa_paypal_info { get; set; }
         public virtual DbSet<gaefa_pic_info> gaefa_pic_info { get; set; }
-        public virtual DbSet<gaefa_book_new> gaefa_book_new { get; set; }
-        public virtual DbSet<gaefa_paypal_new> gaefa_paypal_new { get; set; }
         public virtual DbSet<gaefa_transfer_new> gaefa_transfer_new { get; set; }
         public virtual DbSet<gaefa_coupon> gaefa_coupon { get; set; }
+        public virtual DbSet<gaefa_promo> gaefa_promo { get; set; }
+        public virtual DbSet<user_info> user_info { get; set; }
+        public virtual DbSet<gaefa_paypal_new> gaefa_paypal_new { get; set; }
+        public virtual DbSet<gaefa_book_new> gaefa_book_new { get; set; }
+        public virtual DbSet<gaefa_tag> gaefa_tag { get; set; }
     }
 }

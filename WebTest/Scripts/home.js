@@ -22,70 +22,17 @@
     $('#discPercentage').prop('disabled', true);
     $('#discPrice').prop('disabled', true);
 
-    /*
-    $.validator.addMethod("sameTo", function (value, element, param) {
-        var target = $(param);
-        if (value) return value == target.val();
-        else return this.optional(element);
-    }, "Password mismatch");
+    $('#generatePromoButton').prop('disabled', true);
+    $('#priceDiscPromo').prop('disabled', true);
+    $('#packDiscPromo').prop('disabled', true);
+    $('#promoAmount').prop('disabled', true);
+    $('#expiryDatePromo').prop('disabled', true);
+    $('#availableDatePromo').prop('disabled', true);
+    $('#discPercentagePromo').prop('disabled', true);
+    $('#promoCode').prop('disabled', true);
+    $('#discPricePromo').prop('disabled', true);
+    $('#infiniteAmountPromo').prop('disabled', true);
 
-
-    jQuery.validator.addMethod("lettersonly", function (value, element) {
-        return this.optional(element) || /^[a-z\s]+$/i.test(value);
-    }, "Only alphabetical characters");
-
-
-    $('#changeFullNameForm').validate({
-        rules: {
-            newFullName: {
-                required: true,
-                minlength: 3,
-                lettersonly: true
-            },
-        },
-    });
-
-    $('#changePassword').validate({
-        rules: {
-            currPass: {
-                required: true,
-                minlength: 6,
-            },
-            newPass: {
-                required: true,
-                minlength: 6,
-            },
-            confirmNewPass: {
-                required: true,
-                minlength: 6,
-                sameTo : "#newPass",
-            },
-        },
-    });
-
-    $('#forgotPasswordForm').validate({
-        rules: {
-            email: {
-                required: true,
-                email: true
-            }
-        }
-    });
-
-    $('#createNewPassword').validate({
-        rules: {
-            password: {
-                required: true,
-                minlength: 6,
-            },
-            confirmPassword: {
-                required: true,
-                minlength: 6,
-                sameTo: "#newPassword"
-            },
-        }
-    });
-    */
 });
 
 $('#loginButton').on('click', function (e) {
@@ -95,12 +42,20 @@ $('#loginButton').on('click', function (e) {
         e.preventDefault();
         var email = $("#email").val();
         var pass = $("#password").val();
+        var rememberMe;
+        if ($('#rememberMe').is(':checked')) {
+            rememberMe = true;
+        }
+        else {
+            rememberMe = false;
+        }
         $.ajax({
             type: 'POST',
             url: '/Home/Login/',
             data: AddAntiForgeryToken({
                 loginEmail: email,
                 loginPassword: pass,
+                rememberMe: rememberMe,
             }),
             dataType: "json",
             beforeSend: function () {
@@ -110,22 +65,11 @@ $('#loginButton').on('click', function (e) {
                 if (data.status == "Incorrect") {
                     $('#loginAlert').html("<div class='alert alert-danger' role='alert'><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span><span class='sr-only'>Error: </span> Incorrect email address or password. Please try again.</div>");
                 }
-                /*
-                else if (data.status == "Unconfirmed") {
-                    $('#loginAlert').html("<div class='alert alert-warning' role='alert'><span class='glyphicon glyphicon-warning-sign' aria-hidden='true'></span><span class='sr-only'>Warning: </span> Please confirm your email address first.</div>");
-                    $("#email").val('');
-                    $("#email").blur();
-                    $("#loginPassword").val('');
-                    $("#loginPassword").blur();
-                }
-                */
                 else {
-                    //window.location.replace('/Home/LoginSuccessful?urlReferrer=' + data.url);
                     window.location.replace('/Home/Index/');
                 }
             },
             error: function (error) {
-                alert.log("error");
                 console.log(error);
             }
         });
@@ -315,33 +259,14 @@ $('#syncToGaefa').on('click', function (e) {
         },
         error: function (error) {
             console.log(error);
+            $('#alertSync').html("<div class='alert alert-danger'><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span><span class='sr-only'>Error: </span> Sync has failed. Please try again or contact our admin.</div>");
             $('#syncToGaefa').prop('disabled', false);
         },
     });
 });
 
 
-$('input[type=checkbox]').on('change', function () {
-    /*
-    if ($('input[type=checkbox][name=enablePackDisc]').is(':checked') || $('input[type=checkbox][name=enablePriceDisc]').is(':checked')) {
-        $('#generateCouponButton').prop('disabled', false);
-        $('#ticketAmount').prop('disabled', false);
-        $('#expiryDate').prop('disabled', false);
-        $('#availableDate').prop('disabled', false);
-        if ($("#ticketList").val() == "" || $("#ticketList").val() == null) {
-            $('#generateCouponButton').prop('disabled', true);
-        }
-        else{
-            $('#generateCouponButton').prop('disabled', false);
-        }
-    }
-    else {
-        $('#generateCouponButton').prop('disabled', true);
-        $('#ticketAmount').prop('disabled', true);
-        $('#expiryDate').prop('disabled', true);
-        $('#availableDate').prop('disabled', true);
-    }*/
-
+$(".couponCheckbox").on('change', function () {
     if ($('input[type=checkbox][name=enablePackDisc]').is(':checked') || $('input[type=checkbox][name=enablePriceDisc]').is(':checked')) {
         $('#ticketAmount').prop('disabled', false);
         $('#expiryDate').prop('disabled', false);
@@ -355,6 +280,13 @@ $('input[type=checkbox]').on('change', function () {
             $('#discPercentage').prop('disabled', true);
             $('#discPrice').prop('disabled', false);
         }
+
+        if (!$('input[type=checkbox][name=enablePriceDisc]').is(':checked')) {
+            $('#discPrice').removeProp("max");
+        }
+        else {
+            $('#discPrice').prop('max', $('#priceDisc').val());
+        }
     }
     else {
         $('#generateCouponButton').prop('disabled', true);
@@ -363,8 +295,60 @@ $('input[type=checkbox]').on('change', function () {
         $('#availableDate').prop('disabled', true);
         $('#discPercentage').prop('disabled', true);
         $('#discPrice').prop('disabled', true);
+
+        if (!$('input[type=checkbox][name=enablePriceDisc]').is(':checked')) {
+            $('#discPrice').removeProp("max");
+        }
     }
 });
+
+$(".promoCheckbox").on('change', function () {
+    if ($('input[type=checkbox][name=enablePackDiscPromo]').is(':checked') || $('input[type=checkbox][name=enablePriceDiscPromo]').is(':checked')) {
+        $('#promoAmount').prop('disabled', false);
+        $('#expiryDatePromo').prop('disabled', false);
+        $('#availableDatePromo').prop('disabled', false);
+        $('#generatePromoButton').prop('disabled', false);
+        $('#promoCode').prop('disabled', false);
+        if ($('input[name="discTypePromo"]:checked').val() == "percentage") {
+            $('#discPercentagePromo').prop('disabled', false);
+            $('#discPricePromo').prop('disabled', true);
+        }
+        else if ($('input[name="discTypePromo"]:checked').val() == "price") {
+            $('#discPercentagePromo').prop('disabled', true);
+            $('#discPricePromo').prop('disabled', false);
+        }
+
+        if (!$('input[type=checkbox][name=enablePriceDiscPromo]').is(':checked')) {
+            $('#discPricePromo').removeProp("max");
+        }
+        else {
+            $('#discPricePromo').prop('max', $('#priceDisc').val());
+        }
+        $('#infiniteAmountPromo').prop('disabled', false);
+
+        if ($('#infiniteAmountPromo').is(':checked')) {
+            $('#promoAmount').prop('disabled', true);
+        }
+        else {
+            $('#promoAmount').prop('disabled', false);
+        }
+    }
+    else {
+        $('#generatePromoButton').prop('disabled', true);
+        $('#promoAmount').prop('disabled', true);
+        $('#expiryDatePromo').prop('disabled', true);
+        $('#availableDatePromo').prop('disabled', true);
+        $('#discPercentagePromo').prop('disabled', true);
+        $('#discPricePromo').prop('disabled', true);
+        $('#promoCode').prop('disabled', true);
+        $('#infiniteAmountPromo').prop('disabled', true);
+
+        if (!$('input[type=checkbox][name=enablePriceDiscPromo]').is(':checked')) {
+            $('#discPricePromo').removeProp("max");
+        }
+    }
+});
+
 
 $('input[name="discType"]').on('change', function () {
     if ($('input[type=checkbox][name=enablePackDisc]').is(':checked') || $('input[type=checkbox][name=enablePriceDisc]').is(':checked')) {
@@ -379,6 +363,19 @@ $('input[name="discType"]').on('change', function () {
     }
 });
 
+$('input[name="discTypePromo"]').on('change', function () {
+    if ($('input[type=checkbox][name=enablePackDiscPromo]').is(':checked') || $('input[type=checkbox][name=enablePriceDiscPromo]').is(':checked')) {
+        if ($('input[name="discTypePromo"]:checked').val() == "percentage") {
+            $('#discPercentagePromo').prop('disabled', false);
+            $('#discPricePromo').prop('disabled', true);
+        }
+        else if ($('input[name="discTypePromo"]:checked').val() == "price") {
+            $('#discPercentagePromo').prop('disabled', true);
+            $('#discPricePromo').prop('disabled', false);
+        }
+    }
+});
+
 $('input[type=checkbox][name=enablePackDisc]').on('change', function () {
     if ($(this).is(':checked')) {
         $('#packDisc').prop('disabled', false);
@@ -388,12 +385,30 @@ $('input[type=checkbox][name=enablePackDisc]').on('change', function () {
     }
 });
 
+$('input[type=checkbox][name=enablePackDiscPromo]').on('change', function () {
+    if ($(this).is(':checked')) {
+        $('#packDiscPromo').prop('disabled', false);
+    }
+    else {
+        $('#packDiscPromo').prop('disabled', true);
+    }
+});
+
 $('input[type=checkbox][name=enablePriceDisc]').on('change', function () {
     if ($(this).is(':checked')) {
         $('#priceDisc').prop('disabled', false);
     }
     else {
         $('#priceDisc').prop('disabled', true);
+    }
+});
+
+$('input[type=checkbox][name=enablePriceDiscPromo]').on('change', function () {
+    if ($(this).is(':checked')) {
+        $('#priceDiscPromo').prop('disabled', false);
+    }
+    else {
+        $('#priceDiscPromo').prop('disabled', true);
     }
 });
 
@@ -506,8 +521,90 @@ $('#generateCouponButton').on('click', function (e) {
     }
 });
 
+
+$('#generatePromoButton').on('click', function (e) {
+    if ($("#promoForm")[0].checkValidity() == true) {
+        e.preventDefault();
+        var id = parseInt($("#ticketList option:selected").text());
+        var minPackPromo;
+        var minPricePromo;
+        var promoAmount;
+        var expiryDatePromo;
+        var availableDatePromo;
+        var discPercentagePromo;
+        var promoCode;
+
+        if ($('#packDiscPromo').prop('disabled')) {
+            minPackPromo = null;
+        }
+        else {
+            minPackPromo = $('#packDiscPromo').val();
+        }
+        
+        if ($('#priceDiscPromo').prop('disabled')) {
+            minPricePromo = null;
+        }
+        else {
+            minPricePromo = $('#priceDiscPromo').val();
+        }
+
+        discTypePromo = $('input[name="discTypePromo"]:checked').val();
+        promoAmount = $('#promoAmount').val();
+        availableDatePromo = $('#availableDatePromo').val();
+        expiryDatePromo = $('#expiryDatePromo').val();
+        discPercentagePromo = $('#discPercentagePromo').val()
+        discPricePromo = $('#discPricePromo').val();
+        promoCode = $('#promoCode').val();
+
+        if ($('#infiniteAmountPromo').is(':checked')) {
+            promoAmount = -1;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/Home/GeneratePromo/',
+            data: AddAntiForgeryToken({
+                discType: discTypePromo,
+                ticketID: id,
+                minPack: minPackPromo,
+                minPrice: minPricePromo,
+                promoAmount: promoAmount,
+                expiryDate: expiryDatePromo,
+                availableDate: availableDatePromo,
+                discPercentage: discPercentagePromo,
+                discPrice: discPricePromo,
+                promoCode: promoCode,
+            }),
+            dataType: "json",
+            beforeSend: function () {
+                $('#alertCoupon').html("<div class='alert alert-info'><span aria-hidden='true'><i class='fa fa-refresh fa-pulse'></i></span><span class='sr-only'>Loading: </span> Please Wait...</div>");
+            },
+            success: function (data) {
+                if (data.status == "success") {
+                    $('#alertCoupon').html("<div class='alert alert-success'><span class='glyphicon glyphicon-ok' aria-hidden='true'></span><span class='sr-only'>Success: </span> '" + data.promoCode + "' promo code successfully created.</div>");
+                }
+                else if (data.status == "existed promo code") {
+                    $('#alertCoupon').html("<div class='alert alert-danger'><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span><span class='sr-only'>Error: </span> Promo code is already exist. Please use another name for the promo code.</div>");
+                }
+                else {
+                    $('#alertCoupon').html("<div class='alert alert-danger'><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span><span class='sr-only'>Error: </span> An error has occured.</div>");
+                }                
+            },
+            error: function (error) {
+                console.log(error);
+                $('#alertCoupon').html("<div class='alert alert-danger'><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span><span class='sr-only'>Error: </span> An error has occured.</div>");
+            }
+        });
+    }
+});
+
+
 $('#availableDate').on('change', function () {
     $('#expiryDate').prop('min', $('#availableDate').val());
+});
+
+$('#availableDatePromo').on('change', function () {
+    $('#expiryDatePromo').prop('min', $('#availableDatePromo').val());
 });
 
 $('#sendEmailToGaefa').on('click', function () {
@@ -549,3 +646,21 @@ $('#sendMailToAdminButton').on('click', function (e) {
         });
     }
 });
+
+
+$('#priceDisc').on('change', function () {
+    $('#discPrice').prop('max', $('#priceDisc').val());
+});
+
+$('#priceDiscPromo').on('change', function () {
+    $('#discPricePromo').prop('max', $('#priceDiscPromo').val());
+});
+
+$('#infiniteAmountPromo').on('change', function () {
+    if ($(this).is(':checked')) {
+        $('#promoAmount').prop('disabled', true);
+    }
+    else {
+        $('#promoAmount').prop('disabled', false);
+    }
+})

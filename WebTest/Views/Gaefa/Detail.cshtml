@@ -18,15 +18,38 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            <span class="label label-primary">@Html.DisplayFor(modelItem => modelItem.startDate)</span>
-                            ~
-                            <span class="label label-primary">@Html.DisplayFor(modelItem => modelItem.endDate)</span>
+                            @if (Model.selectedDate != null)
+                            {
+                                <span class="label label-primary">@Model.selectedDate.dateList.ElementAt(0).date.Substring(0, 10)</span>
+                                @:~
+                                <span class="label label-primary">@Model.selectedDate.dateList.ElementAt(Model.selectedDate.dateList.Count - 1).date.Substring(0, 10)</span>
+                            }
+                            else {
+                                <span class="label label-primary">@Model.rangedDate.start_date.Substring(0, 10)</span>
+                                @:~
+                                <span class="label label-primary">@Model.rangedDate.end_date.Substring(0, 10)</span>
+                            }
                             <br />
                             Destination: <b>@Html.DisplayFor(modelItem => modelItem.location)</b>
                             <br />
-                            Price: <b>US$ @Html.DisplayFor(modelItem => modelItem.pricePerPack)</b>
+                            Adult Price: <b>US$ @Html.DisplayFor(modelItem => modelItem.priceAdult)</b>
                             <br />
-                            Minimum Pack: <b>@Html.DisplayFor(modelItem => modelItem.minimumPack)</b> pax
+                            Child Price: <b>US$ @Html.DisplayFor(modelItem => modelItem.priceChild)</b>
+                            <br />
+                            Child No Bed Price: <b>US$ @Html.DisplayFor(modelItem => modelItem.priceChildNoBed)</b>
+                            <br />
+                            @if (Model.selectedDate != null)
+                            {
+                                @:Minimum Pack: <b>1</b> pax
+                                <br/>
+                                @:Maximum Pack: <b>May vary based on date</b>
+                            }
+                            else
+                            {
+                                @:Minimum Pack: <b>@Html.DisplayFor(modelItem => modelItem.rangedDate.minimum_pack)</b> pax
+                                <br />
+                                @:Maximum Pack: <b>@Html.DisplayFor(modelItem => modelItem.rangedDate.maximum_pack)</b> pax
+                            }
                             <br />
                             Duration:
                             @if (Model.duration != null)
@@ -81,7 +104,7 @@
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <div class="panel-title">Additional Note(s): <a href="javascript:void(0)" id="showNote" class="pull-right" data-toggle="collapse" data-parent="false"><i class="fa fa-chevron-down"></i></a></div>
+                            <div class="panel-title">Notes: <a href="javascript:void(0)" id="showNote" class="pull-right" data-toggle="collapse" data-parent="false"><i class="fa fa-chevron-down"></i></a></div>
                         </div>
                         <div class="panel-collapse collapse">
                             <div class="panel-body">

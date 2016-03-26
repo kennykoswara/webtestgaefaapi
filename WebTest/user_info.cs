@@ -24,6 +24,7 @@ namespace WebTest
         public string fullname { get; set; }
         public string email { get; set; }
         public string password { get; set; }
+        public string token { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<book_info> book_info { get; set; }

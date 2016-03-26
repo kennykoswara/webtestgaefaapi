@@ -3,11 +3,10 @@
 @model WebTest.Controllers.GaefaController.GaefaMultipleModelNew
 
 @{
-    ViewBag.Title = "WebTest - Approve Transfer Payment";
+    ViewBag.Title = "WebTest - Payment Waiting List";
     Layout = "~/Views/Shared/GaefaTemplate.cshtml";
 }
 
-@Html.Raw(TempData["Approved"])
 <div class="container-fluid">
     @foreach (var item in Model.booking)
             {
@@ -29,9 +28,7 @@
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <span class="label label-primary">@Html.DisplayFor(modelItem => package.startDate)</span>
-                                            ~
-                                            <span class="label label-primary">@Html.DisplayFor(modelItem => package.endDate)</span>
+                                            <span class="label label-primary">@item.dateToGo.ToString("dd/MM/yyyy")</span>
                                         </div>
                                         <div class="col-md-6">
                                             <form action="@Url.Action("DetailWithPayment", "Gaefa")" method="post">

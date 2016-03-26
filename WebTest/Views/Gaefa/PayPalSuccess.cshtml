@@ -18,7 +18,12 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="well">You can now view the package on the 'Purchased' section.</div>
+            <div class="well">You can view your booking detail via the <b>Find booking</b> section or click the button below.</div>
+            <form method="post" action="@Url.Action("PayPalDetail","Gaefa")">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="bookingCode" value="@Html.DisplayFor(model => model)" />
+                <input type="submit" class="btn btn-primary form-control" value="View details" style="min-width:100%" />
+            </form>
         </div>
     </div>
 </div>

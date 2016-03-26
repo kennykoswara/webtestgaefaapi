@@ -11,6 +11,6 @@ namespace WebTest.PortalList
         public string titleOrLocation { get; set; }
         public Boolean? include_flight { get; set; }
         public Boolean? include_inn { get; set; }
-        
+        public string tag { get; set; }
     }
 }

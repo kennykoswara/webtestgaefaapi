@@ -1,4 +1,31 @@
-﻿
+﻿@using WebTest.Infrastructure
+@{ 
+    testEntities3 db = new testEntities3();
+
+    HttpCookie myCookie = Request.Cookies["WebTestCookie"];
+
+
+    if (myCookie == null)
+    {
+    }
+    else
+    {
+        if (!string.IsNullOrEmpty(myCookie.Values["token"]))
+        {
+            System.Diagnostics.Debug.WriteLine(myCookie.Values["token"]);
+            string cookieToken = myCookie.Values["token"].ToString();
+            var user = from u in db.user_info where u.token != null && u.token == cookieToken select u;
+
+            if (user.Any())
+            {
+                Session[GlobalVar.SESSION_EMAIL] = user.FirstOrDefault().email;
+                Session[GlobalVar.SESSION_NAME] = user.FirstOrDefault().fullname;
+                Session[GlobalVar.SESSION_ID] = user.FirstOrDefault().id;
+            }
+            System.Diagnostics.Debug.WriteLine(Session[GlobalVar.SESSION_NAME]);
+        }
+    }
+}
 
 <nav class="navbar navbar-inverse" role="navigation">
     <div class="container-fluid">
@@ -22,7 +49,9 @@
                 @{
                     if (@Session[WebTest.Infrastructure.GlobalVar.SESSION_NAME] != null)
                     {
-                        <li><a href="@Url.Action("CouponGenerator","Home")">Generate Coupon</a></li>
+                        <li><a href="@Url.Action("TagMaker","Gaefa")">Generate Tag</a></li>
+                        <li><a href="@Url.Action("GetDetailByReferenceView","Gaefa")">Get Detail</a></li>
+                        <li><a href="@Url.Action("DiscountGenerator","Home")">Generate Discount</a></li>
                         <li><a href="@Url.Action("Approve","Gaefa")">Approve Payment</a></li>
                         @*@<li><a href="@Url.Action("Pending","Gaefa")">Transfer Pending</a></li>*@
                         <li><a href="@Url.Action("Sold","Gaefa")">Sold</a></li>

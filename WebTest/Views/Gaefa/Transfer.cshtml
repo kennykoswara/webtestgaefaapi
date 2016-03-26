@@ -7,6 +7,14 @@
 }
 
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            @if (ViewBag.Disapproved)
+            {
+                <div class="alert alert-danger" role="alert"><b>Your payment has been disapproved by the admin.</b> Please give the right transfer information.</div>
+            }
+        </div>
+    </div>
     <div class="col-md-6">
         <div class="row">
             <div class="col-md-12">
@@ -99,7 +107,7 @@
                     </ul>
                         *@
 
-                    <p>Passengers: <b>@Html.DisplayFor(model => model.booking.passengerAmount)</b> (<b>@Html.DisplayFor(model => model.booking.adultCount)</b> Adult(s), <b>@Html.DisplayFor(model => model.booking.childCount)</b> kid(s))</p>
+                    <p>Passengers: <b>@Html.DisplayFor(model => model.booking.passengerAmount)</b> (<b>@Html.DisplayFor(model => model.booking.adultCount)</b> Adult(s), <b>@Html.DisplayFor(model => model.booking.childCount)</b> child, <b>@Html.DisplayFor(model => model.booking.childNoBedCount)</b> child without bed)</p>
 
                     @*
                     <p>Adult: </p>
@@ -182,30 +190,52 @@
                     </div>
 
                     <p>
-                        Coupon:
-                        @if (Model.booking.couponCode != null)
+                        @if (ViewBag.DiscType == 0)
                         {
+                            @:Coupon:
                             if (ViewBag.DiscFlag == 0)
                             {
                                 <b>@Html.DisplayFor(model => model.booking.couponCode)</b> @:(@ViewBag.DiscAmount% discount)
                             }
                             else if (ViewBag.DiscFlag == 1)
                             {
-                                <b>@Html.DisplayFor(model => model.booking.couponCode)</b> @:(US$ @ViewBag.DiscAmount discount)
+                                <b>@Html.DisplayFor(model => model.booking.couponCode)</b> @:(US$ @ViewBag.DiscPrice discount)
                             }
                             else
                             {
                                 <b>-</b>
                             }
-
+                        }
+                        else if(ViewBag.DiscType == 1)
+                        {
+                            @:Promo:
+                            if (ViewBag.DiscFlag == 0)
+                            {
+                                <b>@Html.DisplayFor(model => model.booking.promoCode)</b> @:(@ViewBag.DiscAmount% discount)
+                            }
+                            else if (ViewBag.DiscFlag == 1)
+                            {
+                                <b>@Html.DisplayFor(model => model.booking.promoCode)</b> @:(US$ @ViewBag.DiscPrice discount)
+                            }
+                            else
+                            {
+                                <b>-</b>
+                            }
                         }
                         else
                         {
-                            <b>-</b>
+                            @:Coupon / Promo: <b>-</b>
                         }
                     </p>
 
-                    <p>Total Price: US$ <b id="priceTotal">@Html.DisplayFor(model => model.booking.totalPrice)</b> (@ViewBag.OriginalPrice - @ViewBag.DiscAmount)</p>
+                    @if(ViewBag.DiscType == -1)
+                    {
+                        <p>Total Price: US$ <b id="priceTotal">@Html.DisplayFor(model => model.booking.totalPrice)</b></p>
+                    }
+                    else
+                    {
+                        <p>Total Price: US$ <b id="priceTotal">@Html.DisplayFor(model => model.booking.totalPrice)</b> (US$ @ViewBag.OriginalPrice - US$ @ViewBag.DiscPrice)</p>
+                    }
                 </div>
             </div>
         </div>

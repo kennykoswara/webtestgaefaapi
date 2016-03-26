@@ -20,37 +20,18 @@ using WebTest.Security;
 
 namespace WebTest.Controllers
 {
-
     public class HomeController : Controller
     {
         testEntities3 db = new testEntities3();
+        
 
-        /*NO ADULT CHILD
-        public ActionResult Index()
-        {
-            var query_wait_approval = from b in db.gaefa_book_info where b.status == "Waiting" select b;
-            var query_sold = from b in db.gaefa_book_info where b.status == "Paid" select b;
-            var query_wait_confirmation = from b in db.gaefa_book_info where b.status == "Unpaid" select b;
-            var query_disapproved = from b in db.gaefa_book_info where b.status == "Disapproved" select b;
-            var query_un_posted = from p in db.gaefa_paypal_info where p.postedToGaefa == false select p;
-
-            ViewBag.WaitingApproval = query_wait_approval.Count();
-            ViewBag.Sold = query_sold.Count();
-            ViewBag.WaitingConfirmation = query_wait_confirmation.Count();
-            ViewBag.Disapproved = query_disapproved.Count();
-            ViewBag.Unposted = query_un_posted.Count();
-
-            return View();
-        }
-        */
-
-        public ActionResult Index()
+        public ActionResult Index() //Dashboard front page
         {
             var query_wait_approval = from b in db.gaefa_book_new where b.status == "Waiting" select b;
             var query_sold = from b in db.gaefa_book_new where b.status == "Paid" select b;
             var query_wait_confirmation = from b in db.gaefa_book_new where b.status == "Unpaid" select b;
             var query_disapproved = from b in db.gaefa_book_new where b.status == "Disapproved" select b;
-            var query_un_posted = from p in db.gaefa_paypal_new where p.postedToGaefa == false select p;
+            var query_un_posted = from p in db.gaefa_book_new where p.postedToGaefa == false && p.status == "Paid" select p;
 
             ViewBag.WaitingApproval = query_wait_approval.Count();
             ViewBag.Sold = query_sold.Count();
@@ -61,7 +42,7 @@ namespace WebTest.Controllers
             return View();
         }
 
-        public ActionResult Login()
+        public ActionResult Login() //Login Page, Not Shown in navbar because only for admin. Must navigate to Home/Login
         {
             if (Session[GlobalVar.SESSION_NAME] != null || Session[GlobalVar.SESSION_ID] != null)
             {
@@ -73,7 +54,7 @@ namespace WebTest.Controllers
             }
         }
 
-        public ActionResult LoginSuccessful(string urlReferrer)
+        public ActionResult LoginSuccessful(string urlReferrer) //Decided not to use this for now
         {
             if (Session[GlobalVar.SESSION_NAME] != null || Session[GlobalVar.SESSION_ID] != null)
             {
@@ -89,13 +70,14 @@ namespace WebTest.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(string loginEmail, string loginPassword)
+        public ActionResult Login(string loginEmail, string loginPassword, bool rememberMe) //Process login details
         {
             if (Session[GlobalVar.SESSION_NAME] == null || Session[GlobalVar.SESSION_ID] == null)
             {
                 loginPassword = BasicHelper.hashPassword(loginPassword);
 
                 var query = from e in db.user_info where e.email == loginEmail && e.password == loginPassword select e;
+
                 string status;
 
                 if (query.FirstOrDefault() == null)
@@ -105,11 +87,38 @@ namespace WebTest.Controllers
                 }
                 else
                 {
+                    string token = BasicHelper.getRandomString(50);
+                    query.FirstOrDefault().token = token;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.SaveChanges();
+                    }
+
                     Session[GlobalVar.SESSION_NAME] = query.FirstOrDefault().fullname;
-                    GlobalVar.ID_USER = query.FirstOrDefault().id;
                     Session[GlobalVar.SESSION_ID] = query.FirstOrDefault().id;
                     Session[GlobalVar.SESSION_EMAIL] = query.FirstOrDefault().email;
                     //TempData["msg"] = "<script>alert('Login Successful');</script>";
+                    if (rememberMe)
+                    {
+                        //create a cookie
+                        HttpCookie myCookie = new HttpCookie("WebTestCookie");
+                        if (!string.IsNullOrEmpty(myCookie.Values["token"]))
+                        {
+                            myCookie.Values.Set("token", token);
+                        }
+                        else
+                        {
+                            myCookie.Values.Add("token", token);
+                        }
+                        
+                        //set cookie expiry date-time. Made it to last for next 12 hours.
+                        myCookie.Expires = DateTime.Now.AddDays(7d);
+
+                        //Most important, write the cookie to client.
+                        Response.Cookies.Add(myCookie);
+                    }
+
                     status = "Success";
                     //System.Diagnostics.Debug.WriteLine(Request.Url.GetLeftPart(UriPartial.Authority));
                     //System.Diagnostics.Debug.WriteLine(Url.Action("Detail", "Booking"));  
@@ -133,7 +142,7 @@ namespace WebTest.Controllers
         }
 
         [SessionExpire]
-        public ActionResult Logout()
+        public ActionResult Logout() //Logout function
         {
             if (Session[GlobalVar.SESSION_NAME] == null || Session[GlobalVar.SESSION_ID] == null)
             {
@@ -141,25 +150,35 @@ namespace WebTest.Controllers
             }
             else
             {
+                string email = Session[GlobalVar.SESSION_EMAIL].ToString();
+                var query = from e in db.user_info where e.email == email select e;
+
+                query.FirstOrDefault().token = null;
+
+                if (ModelState.IsValid)
+                {
+                    db.SaveChanges();
+                }
+
+                HttpCookie myCookie = new HttpCookie("WebTestCookie");
+                myCookie.Expires = DateTime.Now.AddDays(-1d);
+                Response.Cookies.Add(myCookie);
+
                 Session.Abandon();
                 Session.RemoveAll();
-                FormsAuthentication.SignOut();
             }
-            return View();
+            return View("Index");
         }
-
-        // GET: UserInfo/Create
-        public ActionResult Register()
+        
+        public ActionResult Register() //Not used anymore
         {
             return View();
         }
-
-        // POST: UserInfo/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
+        /*
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(string fullname, string email, string password)
+        public ActionResult Register(string fullname, string email, string password) //Not used anymore
         {
             password = BasicHelper.hashPassword(password);
 
@@ -220,7 +239,7 @@ namespace WebTest.Controllers
                                     ve.ErrorMessage);
                             }
                         }
-                    }*/
+                    }
                 }
                 else
                 {
@@ -231,9 +250,10 @@ namespace WebTest.Controllers
             }
             return Json(new { status = status });
         }
+        */
 
-
-        public void SendEmailConfirmation(user_info user, email_confirmation email)
+            /*
+        public void SendEmailConfirmation(user_info user, email_confirmation email) //Not used anymore
         {
             var body = "<p>Hi, " + user.fullname + ".</p><p>Welcome to WebTest.</p><p>Before you can login with your account, please confirm your account on this " + "<a href='" + GlobalVar.BASE_URL + "Home/ConfirmEmail?email=" + user.email + "&token=" + email.token + "'>link</a></p>";
             var message = new MailMessage();
@@ -258,53 +278,23 @@ namespace WebTest.Controllers
             }
         }
 
-        /*
-        public ActionResult ConfirmEmail(string email, string token)
-        {
-            var query_user = from u in db.user_info where u.email == email select u;
-            var query_email = from e in db.email_confirmation where e.email == email && e.token == token select e;
-
-            if (query_email.FirstOrDefault() != null)
-            {
-                if (query_user.FirstOrDefault().emailConfirmed)
-                {
-                    return RedirectToAction("ConfirmAlready", "Home");
-                }
-                else
-                {
-                    query_user.FirstOrDefault().emailConfirmed = true;
-                    db.email_confirmation.Remove(query_email.FirstOrDefault());
-                    if (ModelState.IsValid)
-                    {
-                        db.SaveChanges();
-                    }
-                    return RedirectToAction("ConfirmSuccess", "Home");
-                }
-            }
-            else
-            {
-                return RedirectToAction("ConfirmFailed", "Home");
-            }
-        }
-        */
-
-        public ActionResult ConfirmSuccess()
+        public ActionResult ConfirmSuccess() //Not used anymore
         {
             return View();
         }
 
-        public ActionResult ConfirmFailed()
+        public ActionResult ConfirmFailed() //Not used anymore
         {
             return View();
         }
 
-        public ActionResult ConfirmAlready()
+        public ActionResult ConfirmAlready() //Not used anymore
         {
             return View();
         }
 
         [SessionExpire]
-        public ActionResult ProfileTab()
+        public ActionResult ProfileTab() //Not used anymore
         {
             if (Session[GlobalVar.SESSION_NAME] == null || Session[GlobalVar.SESSION_ID] == null)
             {
@@ -319,8 +309,9 @@ namespace WebTest.Controllers
             }
         }
 
+        
         [SessionExpire]
-        public ActionResult ChangeFullName()
+        public ActionResult ChangeFullName() //Not Used Anymore
         {
             if (Session[GlobalVar.SESSION_NAME] == null || Session[GlobalVar.SESSION_ID] == null)
             {
@@ -334,8 +325,10 @@ namespace WebTest.Controllers
             }
         }
 
+        */
+
         [SessionExpire]
-        public ActionResult ChangePassword()
+        public ActionResult ChangePassword() //Page to Change Password
         {
             if (Session[GlobalVar.SESSION_NAME] == null || Session[GlobalVar.SESSION_ID] == null)
             {
@@ -347,10 +340,11 @@ namespace WebTest.Controllers
             }
         }
 
+        /*
         [SessionExpire]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SubmitChangeFullName(string newFullName)
+        public ActionResult SubmitChangeFullName(string newFullName) //Not Used Anymore
         {
             //TempData["msg"] = "<script>alert('Full name changed successfully.');</script>";
             string email = Session[GlobalVar.SESSION_EMAIL].ToString();
@@ -361,11 +355,12 @@ namespace WebTest.Controllers
             //return RedirectToAction("ProfileTab","Home");
             return Json(new { status = "success" });
         }
+        */
 
         [SessionExpire]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SubmitChangePassword(string currPass, string newPass)
+        public ActionResult SubmitChangePassword(string currPass, string newPass) //Change password for admin
         {
             string email = Session[GlobalVar.SESSION_EMAIL].ToString();
             var query = from u in db.user_info where u.email == email select u;
@@ -390,7 +385,7 @@ namespace WebTest.Controllers
 
         }
 
-        public ActionResult ForgotPassword()
+        public ActionResult ForgotPassword() //If admin forgot password
         {
             if (Session[GlobalVar.SESSION_NAME] == null || Session[GlobalVar.SESSION_ID] == null)
             {
@@ -405,7 +400,7 @@ namespace WebTest.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SendForgotPasswordEmail(string email)
+        public ActionResult SendForgotPasswordEmail(string email) //email about forgot password
         {
             var query = from u in db.user_info where u.email == email select u;
             var query_passConfirm = from p in db.password_confirmation where p.email == email select p;
@@ -447,7 +442,7 @@ namespace WebTest.Controllers
         }
 
 
-        public ActionResult CreateNewPassword(string email, string token)
+        public ActionResult CreateNewPassword(string email, string token) //Page after click link confirmation of forgot password in email
         {
             if(email == null || token == null)
             {
@@ -473,7 +468,7 @@ namespace WebTest.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ConfirmNewPassword(string email, string token, string password)
+        public ActionResult ConfirmNewPassword(string email, string token, string password) //Function to create new password after forgot
         {
             var query_password = from p in db.password_confirmation where p.email == email && p.token == token select p;
             var query_user = from u in db.user_info where u.email == email select u;
@@ -494,61 +489,16 @@ namespace WebTest.Controllers
             //return RedirectToAction("Index","Home");
         }
 
-        public ActionResult GenerateOrderReference()
-        {
-            string a = DateTime.Now.ToString("yyyyMMddhhmmss") + "-" + BasicHelper.getRandomString(6);
-            return View(model: a);
-        }
-
         [SessionExpire]
-        public ActionResult CouponGenerator()
+        public ActionResult DiscountGenerator() //Page to make coupon or promo code
         {
-            /*
-            GaefaSignature sign = new GaefaSignature();
-            GaefaPagination pagination = new GaefaPagination()
-            {
-                limit = 10000,
-                start = 0,
-            };
-            GaefaFilter filter = new GaefaFilter()
-            {
-                titleOrLocation = "",
-                include_flight = null,
-                include_inn = null,
-            };
-            GaefaPackageSort sort = new GaefaPackageSort()
-            {
-                sortMode = GaefaPackageSort.sort_mode.DESCENDING,
-                sortType = GaefaPackageSort.sort_type.cdate,
-            };
-            JSONParser json = new JSONParser();
-            json.Url = json.BaseUrlGetList + "?agency_uid=" + GlobalVar.AGENCY_UID + "&signature=" + sign.GetSignature() + "&start=" + pagination.start + "&limit=" + pagination.limit + "&keyword=" + filter.titleOrLocation + "&include_flight=" + filter.include_flight + "&include_inn=" + filter.include_inn + "&sort_type=" + (int)sort.sortType + "&sort_mode=" + (int)sort.sortMode;
-            System.Diagnostics.Debug.WriteLine(json.Url);
-            //string url = GaefaPackageUrl();
-            List<GaefaPackageJSON> ListOfGaefaPackageJSON = json.GetGaefaPackageArray(json.Url);
-            List<GaefaPackage> ListOfGaefaPackage = new List<GaefaPackage>();
-            List<int> ticketIDList = new List<int>();
-
-            if(ListOfGaefaPackageJSON == null)
-            {
-                return RedirectToAction("Error","Gaefa");
-            }
-            else
-            {
-                ListOfGaefaPackageJSON.ForEach(x =>
-                {
-                    ticketIDList.Add(x.id);
-                });
-
-                return View(model: ticketIDList);
-            }*/
             return View();
         }
 
         [SessionExpire]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult GenerateCoupon(string discType, int? minPack, decimal? minPrice, int ticketAmount, int? discPercentage, decimal? discPrice, DateTime expiryDate, DateTime availableDate)
+        public ActionResult GenerateCoupon(string discType, int? minPack, decimal? minPrice, int ticketAmount, int? discPercentage, decimal? discPrice, DateTime expiryDate, DateTime availableDate) //Function to generate coupon code
         {
             IQueryable<gaefa_coupon> coupon_query;
             int count = 0;
@@ -566,6 +516,14 @@ namespace WebTest.Controllers
             if(minPrice == null && minPack == null)
             {
                 return Json(new { status = "error", couponCount = -1 });
+            }
+
+            if(minPrice != null)
+            {
+                if(discPrice > minPrice)
+                {
+                    return Json(new { status = "error", couponCount = -1 });
+                }
             }
 
             for(int i = 0; i < ticketAmount; i++)
@@ -633,7 +591,7 @@ namespace WebTest.Controllers
         }
 
         [SessionExpire]
-        public ActionResult CouponsList()
+        public ActionResult CouponsList() //Function to show list of generated coupon
         {
             var query_coupon = from c in db.gaefa_coupon select c;
             
@@ -641,7 +599,7 @@ namespace WebTest.Controllers
         }
 
         [SessionExpire]
-        public ActionResult RemoveCoupon(string couponCode)
+        public ActionResult RemoveCoupon(string couponCode) //Function to remove coupon
         {
             var coupon_query = from c in db.gaefa_coupon where c.couponCode == couponCode select c;
 
@@ -672,10 +630,115 @@ namespace WebTest.Controllers
         [SessionExpire]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ReportIssueToGaefaAdmin(string emailSubject, string emailBody)
+        public ActionResult GeneratePromo(string discType, int? minPack, decimal? minPrice, int promoAmount, int? discPercentage, decimal? discPrice, DateTime expiryDate, DateTime availableDate, string promoCode) //Function to generate promo code
+        {
+            var promo_query = from p in db.gaefa_promo where p.promoCode == promoCode select p;
+
+            if(promo_query.FirstOrDefault() != null)
+            {
+                return Json(new { status = "existed promo code"});
+            }
+
+            if (promoAmount == 0)
+            {
+                return Json(new { status = "error"});
+            }
+
+            if (discPercentage == null && discPrice == null)
+            {
+                return Json(new { status = "error"});
+            }
+
+            if (minPrice == null && minPack == null)
+            {
+                return Json(new { status = "error"});
+            }
+
+            if (minPrice != null)
+            {
+                if (discPrice > minPrice)
+                {
+                    return Json(new { status = "error"});
+                }
+            }
+
+            if(promoCode == "" || promoCode == null)
+            {
+                return Json(new { status = "error"});
+            }
+
+            gaefa_promo x = new gaefa_promo
+            {
+                promoCode = promoCode,
+                availableDate = availableDate,
+                amount = promoAmount,
+                discPercentage = discPercentage,
+                discPrice = discPrice,
+                expiryDate = expiryDate,
+                packMin = minPack,
+                priceMin = minPrice,
+                used = 0,
+            };
+
+            if (ModelState.IsValid)
+            {
+                db.gaefa_promo.Add(x);
+                db.SaveChanges();
+            }
+
+            return Json(new { status = "success", promoCode = promoCode});
+        }
+
+        [SessionExpire]
+        public ActionResult PromoList() //Function to show list of generated promo code
+        {
+            var query_promo = from x in db.gaefa_promo select x;
+
+            return View(model: query_promo.ToList().OrderByDescending(x => x.availableDate));
+        }
+
+        [SessionExpire]
+        public ActionResult RemovePromo(string promoCode)//Function to delete promoCode
+        {
+            var promo_query = from c in db.gaefa_promo where c.promoCode == promoCode select c;
+
+            if (promo_query.FirstOrDefault() == null)
+            {
+                return RedirectToAction("Error", "Gaefa");
+            }
+            else
+            {
+                db.gaefa_promo.Remove(promo_query.FirstOrDefault());
+                if (ModelState.IsValid)
+                {
+                    db.SaveChanges();
+                }
+
+                return RedirectToAction("PromoList", "Home");
+            }
+        }
+        
+        [SessionExpire]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ReportIssueToGaefaAdmin(string emailSubject, string emailBody) //Function for admin to send email to Gaefa in case error occured -> Change gaefa admin email ad GlobalVar.cs
         {
             BasicHelper.sendEmail(GlobalVar.EMAIL_GAEFA, "Report Issue from WebTest - " + emailSubject, emailBody);
             return Json(new { status = "success" });
+        }
+
+        public ActionResult SetSession(string token)
+        {
+            var user = from u in db.user_info where u.token == token select u;
+
+            if (user.Any())
+            {
+                Session[GlobalVar.SESSION_EMAIL] = user.FirstOrDefault().email;
+                Session[GlobalVar.SESSION_NAME] = user.FirstOrDefault().fullname;
+                Session[GlobalVar.SESSION_ID] = user.FirstOrDefault().id;
+            }
+
+            return RedirectToAction("", "");
         }
     }
 }

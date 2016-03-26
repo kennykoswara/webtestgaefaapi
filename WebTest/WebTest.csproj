@@ -271,14 +271,8 @@
     <Compile Include="book_info.cs">
       <DependentUpon>WebTest.tt</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\GaefaController.cs" />
-    <Compile Include="Controllers\PayPalController.cs" />
-    <Compile Include="Controllers\TourController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\TransferController.cs" />
     <Compile Include="email_confirmation.cs">
       <DependentUpon>WebTest.tt</DependentUpon>
     </Compile>
@@ -298,6 +292,12 @@
       <DependentUpon>WebTest.tt</DependentUpon>
     </Compile>
     <Compile Include="gaefa_pic_info.cs">
+      <DependentUpon>WebTest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="gaefa_promo.cs">
+      <DependentUpon>WebTest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="gaefa_tag.cs">
       <DependentUpon>WebTest.tt</DependentUpon>
     </Compile>
     <Compile Include="gaefa_transfer_info.cs">
@@ -410,9 +410,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Scripts\DeleteInput.js" />
-    <Content Include="Scripts\GaefaOLD.js" />
     <Content Include="Scripts\Gaefa.js" />
-    <Content Include="Scripts\GaefaWithoutPIC.js" />
     <Content Include="Scripts\jquery.elevateZoom-3.0.8.min.js" />
     <Content Include="Scripts\jquery.twbsPagination.min.js" />
     <Content Include="Scripts\moment-with-langs.js" />
@@ -469,31 +467,11 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
-    <Content Include="Views\Account\ConfirmEmail.cshtml" />
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
-    <Content Include="Views\Account\ForgotPassword.cshtml" />
-    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Account\ResetPassword.cshtml" />
-    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\SendCode.cshtml" />
-    <Content Include="Views\Account\VerifyCode.cshtml" />
-    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
-    <Content Include="Views\Manage\ChangePassword.cshtml" />
-    <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Manage\ManageLogins.cshtml" />
-    <Content Include="Views\Manage\SetPassword.cshtml" />
-    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\HomeTemplate.cshtml" />
-    <Content Include="Views\Tour\Index.cshtml" />
     <Content Include="Views\Shared\TourTemplate.cshtml" />
     <Content Include="Views\Shared\Navbar.cshtml" />
-    <Content Include="Views\Tour\List.cshtml" />
     <EntityDeploy Include="WebTest.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>WebTest.Designer.cs</LastGenOutput>
@@ -501,74 +479,51 @@
     <Content Include="WebTest.edmx.diagram">
       <DependentUpon>WebTest.edmx</DependentUpon>
     </Content>
-    <Content Include="Views\Tour\Create.cshtml" />
-    <Content Include="Views\Tour\Checkout.cshtml" />
-    <Content Include="Views\Tour\Json.cshtml" />
     <Content Include="Views\Shared\BookTemplate.cshtml" />
-    <Content Include="Views\Booking\Detail.cshtml" />
-    <Content Include="Views\Booking\Pending.cshtml" />
     <Content Include="Views\Gaefa\List.cshtml" />
     <Content Include="Views\Gaefa\Detail.cshtml" />
     <Content Include="Views\Shared\GaefaTemplate.cshtml" />
-    <Content Include="Views\Gaefa\CheckoutWITHOUTPIC.cshtml" />
-    <Content Include="Views\Transfer\Transfer.cshtml" />
-    <Content Include="Views\Booking\Purchased.cshtml" />
-    <Content Include="Views\Booking\ApproveList.cshtml" />
-    <Content Include="Views\PayPal\Index.cshtml" />
     <Content Include="Views\Shared\PayPalTemplate.cshtml" />
-    <Content Include="Views\PayPal\Success.cshtml" />
-    <Content Include="Views\PayPal\Failed.cshtml" />
-    <Content Include="Views\Transfer\AfterCheckout.cshtml" />
-    <Content Include="Views\PayPal\Cancel.cshtml" />
-    <Content Include="Views\Booking\DetailWithPayment.cshtml" />
-    <Content Include="Views\PayPal\PayPalDetail.cshtml" />
-    <Content Include="Views\Gaefa\Index.cshtml" />
-    <Content Include="Views\Gaefa\Pending.cshtml" />
     <Content Include="Views\Gaefa\DetailWithoutPayment.cshtml" />
     <Content Include="Views\Gaefa\Transfer.cshtml" />
     <Content Include="Views\Gaefa\DetailWithPayment.cshtml" />
     <Content Include="Views\Gaefa\Approve.cshtml" />
-    <Content Include="Views\Gaefa\Purchased.cshtml" />
     <Content Include="Views\Gaefa\PayPalCancel.cshtml" />
     <Content Include="Views\Gaefa\PayPalFailed.cshtml" />
     <Content Include="Views\Gaefa\PayPalSuccess.cshtml" />
     <Content Include="Views\Gaefa\PayPalDetail.cshtml" />
     <Content Include="Views\Gaefa\AfterTransferCheckout.cshtml" />
-    <Content Include="Views\Gaefa\SendToUIApi.cshtml" />
     <Content Include="Views\Gaefa\Error.cshtml" />
-    <Content Include="Views\Gaefa\Email.cshtml" />
     <Content Include="Views\Home\ConfirmSuccess.cshtml" />
     <Content Include="Views\Home\ConfirmFailed.cshtml" />
     <Content Include="Views\Home\ConfirmAlready.cshtml" />
     <Content Include="Views\Home\Profile.cshtml" />
     <Content Include="Views\Home\ChangeFullName.cshtml" />
     <Content Include="Views\Home\ChangePassword.cshtml" />
-    <Content Include="Views\Transfer\DisapprovedTransfer.cshtml" />
     <Content Include="Views\Home\ForgotPassword.cshtml" />
     <Content Include="Views\Home\CreateNewPassword.cshtml" />
-    <Content Include="Views\Home\LoginSuccessful.cshtml" />
     <Content Include="Views\Home\Logout.cshtml" />
-    <Content Include="Views\Tour\ListWithFilter.cshtml" />
     <Content Include="Views\Home\GenerateOrderReference.cshtml" />
-    <Content Include="Views\Gaefa\DisapprovedTransfer.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Gaefa\FindBooking.cshtml" />
     <Content Include="Views\Partial\BookingPreview.cshtml" />
-    <Content Include="Views\Gaefa\AfterTransferConfirmation.cshtml" />
     <Content Include="Views\Gaefa\Sold.cshtml" />
-    <Content Include="Views\Gaefa\CheckoutOLD.cshtml" />
     <Content Include="Views\Gaefa\Checkout.cshtml" />
-    <Content Include="Views\Home\CouponGenerator.cshtml" />
+    <Content Include="Views\Home\DiscountGenerator.cshtml" />
     <Content Include="Views\Home\CouponsList.cshtml" />
     <Content Include="Views\Shared\TransferTemplate.cshtml" />
+    <Content Include="Views\Home\PromoList.cshtml" />
+    <Content Include="Views\Gaefa\ZeroPayment.cshtml" />
+    <Content Include="Views\Gaefa\GetDetailByReference.cshtml" />
+    <Content Include="Views\Gaefa\ZeroPaymentDetail.cshtml" />
+    <Content Include="Views\Gaefa\UpdatePassengerDetails.cshtml" />
+    <Content Include="Views\Gaefa\SavePassengerDetails.cshtml" />
+    <Content Include="Views\Shared\CleanTemplate.cshtml" />
+    <Content Include="Views\Gaefa\TagMaker.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Images\Receipts\" />
-    <Folder Include="Views\GaefaFilter\" />
-    <Folder Include="Views\GaefaPackageSort\" />
-    <Folder Include="Views\GaefaPagination\" />
-    <Folder Include="Views\GaefaSignature\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

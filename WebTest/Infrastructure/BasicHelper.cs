@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -66,6 +68,30 @@ namespace WebTest.Infrastructure
                 smtp.EnableSsl = true;
                 smtp.Send(message);
             }
+        }
+
+        public static string ToFirstLetterCapital(string word)
+        {
+            word = word.ToLower();
+            string finalWord = word;
+            Regex regex = new Regex(@"(^[a-z])");
+            finalWord = regex.Replace(word, s => s.Value.ToUpper());
+
+            return finalWord;
+        }
+
+        public static string ToTitleCase(string word)
+        {
+            TextInfo TI = new CultureInfo("en-US", false).TextInfo;
+            return TI.ToTitleCase(word);
+        }
+    }
+
+    public static class StringExtensions
+    {
+        public static bool Contains(this string source, string toCheck, StringComparison comp)
+        {
+            return source.IndexOf(toCheck, comp) >= 0;
         }
     }
 }

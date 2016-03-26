@@ -14,7 +14,12 @@ namespace WebTest
     
     public partial class gaefa_coupon
     {
-        public int id { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public gaefa_coupon()
+        {
+            this.gaefa_book_new = new HashSet<gaefa_book_new>();
+        }
+    
         public string couponCode { get; set; }
         public Nullable<int> packMin { get; set; }
         public Nullable<decimal> priceMin { get; set; }
@@ -24,5 +29,8 @@ namespace WebTest
         public Nullable<System.DateTime> usedDate { get; set; }
         public Nullable<int> discPercentage { get; set; }
         public Nullable<decimal> discPrice { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<gaefa_book_new> gaefa_book_new { get; set; }
     }
 }

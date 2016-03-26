@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="3f0760837fd340d9a8d378470bb2b7e7" Name="Diagram1">
+      <Diagram DiagramId="3f0760837fd340d9a8d378470bb2b7e7" Name="Diagram1" ZoomLevel="55">
         <EntityTypeShape EntityType="WebTestModel.book_info" Width="1.5" PointX="3" PointY="6.875" />
         <EntityTypeShape EntityType="WebTestModel.paypal_info" Width="1.5" PointX="5.25" PointY="5.125" />
         <EntityTypeShape EntityType="WebTestModel.tour_info" Width="1.5" PointX="0.75" PointY="3" />
@@ -14,21 +14,25 @@
         <AssociationConnector Association="WebTestModel.FK_transfer_info_book_info" />
         <EntityTypeShape EntityType="WebTestModel.email_confirmation" Width="1.5" PointX="3.375" PointY="0.75" />
         <EntityTypeShape EntityType="WebTestModel.password_confirmation" Width="1.5" PointX="5.375" PointY="0.75" />
-        <EntityTypeShape EntityType="WebTestModel.user_info" Width="1.5" PointX="0.625" PointY="9.875" />
-        <AssociationConnector Association="WebTestModel.FK_book_info_user_info" />
         <EntityTypeShape EntityType="WebTestModel.gaefa_transfer_info" Width="1.5" PointX="5" PointY="16.375" />
         <EntityTypeShape EntityType="WebTestModel.gaefa_book_info" PointX="2.75" PointY="14.75" Width="1.5" />
         <AssociationConnector Association="WebTestModel.FK_gaefa_transfer_info_gaefa_book_info" />
         <EntityTypeShape EntityType="WebTestModel.gaefa_paypal_info" Width="1.5" PointX="5" PointY="13.125" />
         <AssociationConnector Association="WebTestModel.FK_gaefa_paypal_info_gaefa_book_info" />
-        <EntityTypeShape EntityType="WebTestModel.gaefa_pic_info" Width="1.5" PointX="9.875" PointY="5" />
-        <EntityTypeShape EntityType="WebTestModel.gaefa_book_new" Width="1.5" PointX="9.875" PointY="0.5" />
-        <EntityTypeShape EntityType="WebTestModel.gaefa_paypal_new" Width="1.5" PointX="12.125" PointY="1.25" />
+        <EntityTypeShape EntityType="WebTestModel.gaefa_pic_info" Width="1.5" PointX="10" PointY="6.625" />
         <EntityTypeShape EntityType="WebTestModel.gaefa_transfer_new" Width="1.5" PointX="7.75" PointY="0.875" />
+        <EntityTypeShape EntityType="WebTestModel.gaefa_coupon" Width="1.5" PointX="8" PointY="5.875" />
+        <EntityTypeShape EntityType="WebTestModel.gaefa_promo" Width="1.5" PointX="11.875" PointY="5.75" />
+        <EntityTypeShape EntityType="WebTestModel.user_info" Width="1.5" PointX="0.625" PointY="10.125" />
+        <AssociationConnector Association="WebTestModel.FK_book_info_user_info" />
+        <EntityTypeShape EntityType="WebTestModel.gaefa_paypal_new" Width="1.5" PointX="12.75" PointY="0.875" />
+        <EntityTypeShape EntityType="WebTestModel.gaefa_book_new" Width="1.5" PointX="10.125" PointY="0.5" />
+        <AssociationConnector Association="WebTestModel.FK_gaefa_book_new_gaefa_coupon" />
+        <AssociationConnector Association="WebTestModel.FK_gaefa_book_new_gaefa_promo" />
         <AssociationConnector Association="WebTestModel.FK_gaefa_paypal_new_gaefa_book_new" />
         <AssociationConnector Association="WebTestModel.FK_gaefa_pic_info_gaefa_book_new" />
         <AssociationConnector Association="WebTestModel.FK_gaefa_transfer_new_gaefa_book_new" />
-        <EntityTypeShape EntityType="WebTestModel.gaefa_coupon" Width="1.5" PointX="7.875" PointY="4.875" />
+        <EntityTypeShape EntityType="WebTestModel.gaefa_tag" Width="1.5" PointX="14" PointY="4" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

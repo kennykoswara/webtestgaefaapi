@@ -1,9 +1,21 @@
 ﻿@{
-    ViewBag.Title = "WebTest - Approve Transfer Payment";
+    ViewBag.Title = "WebTest - Find your booking";
     Layout = "~/Views/Shared/GaefaTemplate.cshtml";
 }
 
+@{ 
+    bool transferSuccess = (ViewBag.AfterTransfer) ?? false ? true : false;
+}
+
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            @if (transferSuccess)
+            {
+                <div class='alert alert-success' role='alert'><span class='glyphicon glyphicon-ok' aria-hidden='true'></span><span class='sr-only'>Success: </span> Confirm payment successful.</div>
+            }
+        </div>
+    </div>
     <div class="jumbotron">
         <div class="container-fluid">
             <div class="row">
@@ -31,4 +43,5 @@
         </div>
     </div>
 </div>
+
 

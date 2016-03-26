@@ -2,7 +2,7 @@
 @model WebTest.Controllers.GaefaController.GaefaDetailNew
 
 @{
-    ViewBag.Title = "WebTest - Detail";
+    ViewBag.Title = "WebTest - Booking Detail";
     Layout = "~/Views/Shared/GaefaTemplate.cshtml";
 }
 
@@ -105,7 +105,19 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            Price Per Pack: <b>US$ @Html.DisplayFor(model => model.gaefaPackage.pricePerPack)</b>
+                            Price Adult: <b>US$ @Html.DisplayFor(model => model.gaefaPackage.priceAdult)</b>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            Price Child: <b>US$ @Html.DisplayFor(model => model.gaefaPackage.priceChild)</b>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            Price Child Without Bed: <b>US$ @Html.DisplayFor(model => model.gaefaPackage.priceChildNoBed)</b>
                         </div>
                     </div>
 
@@ -123,55 +135,50 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            @*
-                            Passenger(s):
-                            <ul>
-                                @foreach (var item in Model.booking.passenger.Split(';'))
-                                {
-                                    <li><b>@Html.DisplayFor(model => item)</b></li>
-                                }
-                            </ul>
-                                *@
 
-                            <p>Passengers: <b>@Html.DisplayFor(model => model.booking.passengerAmount)</b> (<b>@Html.DisplayFor(model => model.booking.adultCount)</b> Adult(s), <b>@Html.DisplayFor(model => model.booking.childCount)</b> kid(s))</p>
+                            <p>Passengers: <b>@Html.DisplayFor(model => model.booking.passengerAmount)</b> (<b>@Html.DisplayFor(model => model.booking.adultCount)</b> Adult(s), <b>@Html.DisplayFor(model => model.booking.childCount)</b> child, <b>@Html.DisplayFor(model => model.booking.childNoBedCount)</b> child without bed)</p>
 
-                            @*
-                            <p>Adult: </p>
-                            @if (Model.booking.adult != null)
-                            {
-                                <ul>
-                                    @foreach (var item in Model.booking.adult.Split(';'))
-                                    {
-                                        <li><b>@Html.DisplayFor(model => item)</b></li>
-                                    }
-                                </ul>
-                            }
-
-                            <p>Child: </p>
-                            @if (Model.booking.child != null)
-                            {
-                                <ul>
-                                    @foreach (var item in Model.booking.child.Split(';'))
-                                    {
-                                        <li><b>@Html.DisplayFor(model => item)</b></li>
-                                    }
-                                </ul>
-                            }
-                                *@
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-12">
-                            Coupon: 
-                            @if (Model.booking.couponCode != null)
+                        @if (ViewBag.DiscType == 0)
+                        {
+                            @:Coupon:
+                            if (ViewBag.DiscFlag == 0)
                             {
                                 <b>@Html.DisplayFor(model => model.booking.couponCode)</b> @:(@ViewBag.DiscAmount% discount)
+                            }
+                            else if (ViewBag.DiscFlag == 1)
+                            {
+                                <b>@Html.DisplayFor(model => model.booking.couponCode)</b> @:(US$ @ViewBag.DiscPrice discount)
                             }
                             else
                             {
                                 <b>-</b>
                             }
+                        }
+                        else if(ViewBag.DiscType == 1)
+                        {
+                            @:Promo:
+                            if (ViewBag.DiscFlag == 0)
+                            {
+                                <b>@Html.DisplayFor(model => model.booking.promoCode)</b> @:(@ViewBag.DiscAmount% discount)
+                            }
+                            else if (ViewBag.DiscFlag == 1)
+                            {
+                                <b>@Html.DisplayFor(model => model.booking.promoCode)</b> @:(US$ @ViewBag.DiscPrice discount)
+                            }
+                            else
+                            {
+                                <b>-</b>
+                            }
+                        }
+                        else
+                        {
+                            @:Coupon / Promo: <b>-</b>
+                        }
                         </div>
                     </div>
 
@@ -242,29 +249,26 @@
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            Total price: US$ <b>@Html.DisplayFor(model => model.booking.totalPrice)</b>
+                            @if (ViewBag.DiscType == -1)
+                            {
+                                <p>Total Price: US$ <b id="priceTotal">@Html.DisplayFor(model => model.booking.totalPrice)</b></p>
+                            }
+                            else
+                            {
+                                <p>Total Price: US$ <b id="priceTotal">@Html.DisplayFor(model => model.booking.totalPrice)</b> (US$ @ViewBag.OriginalPrice - US$ @ViewBag.DiscPrice)</p>
+                            }
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-4 col-xs-6" id="confirmButton">
-                    @if (Model.booking.status == "Unpaid")
-                    {
-                        <form method="post" role="form" action="@Url.Action("Transfer","Gaefa", new {bookingCode = Model.booking.bookCode})">
-                            @Html.AntiForgeryToken()
-                            <input type="submit" class="btn btn-info form-control" value="Confirm Payment" />
-                        </form>
-                    }
-                    else if (Model.booking.status == "Disapproved")
-                    {
-                        <form method="post" role="form" action="@Url.Action("DisapprovedTransfer","Gaefa", new {bookingCode = Model.booking.bookCode})">
-                            @Html.AntiForgeryToken()
-                            <input type="submit" class="btn btn-info form-control" value="Confirm Payment" />
-                        </form>
-                    }
+                    <form method="post" role="form" action="@Url.Action("Transfer","Gaefa", new {bookingCode = Model.booking.bookCode})">
+                        @Html.AntiForgeryToken()
+                        <input type="submit" class="btn btn-info form-control" value="Confirm Payment" />
+                    </form>
                 </div>
-                <div class="col-md-4 col-xs-6 areYouSure">
+                <div class="col-md-4 col-xs-6 col-md-pull-1 col-xs-pull-2 areYouSure">
                     <button type="submit" class="btn btn-warning cancel-booking">Cancel Booking</button>
                 </div>
             </div>

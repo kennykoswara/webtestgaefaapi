@@ -1,14 +1,38 @@
-﻿
-
+﻿@using WebTest.Infrastructure
 @{
     Layout = "~/Views/Shared/HomeTemplate.cshtml";
     ViewBag.Title = "Test - Home";
+
+    testEntities3 db = new testEntities3();
+
+    HttpCookie myCookie = Request.Cookies["WebTestCookie"];
+
+    if (myCookie == null)
+    {
+    }
+    else
+    {
+        if (!string.IsNullOrEmpty(myCookie.Values["token"]))
+        {
+            System.Diagnostics.Debug.WriteLine(myCookie.Values["token"]);
+            string cookieToken = myCookie.Values["token"].ToString();
+            var user = from u in db.user_info where u.token != null && u.token == cookieToken select u;
+
+            if (user.Any())
+            {
+                Session[GlobalVar.SESSION_EMAIL] = user.FirstOrDefault().email;
+                Session[GlobalVar.SESSION_NAME] = user.FirstOrDefault().fullname;
+                Session[GlobalVar.SESSION_ID] = user.FirstOrDefault().id;
+            }
+            System.Diagnostics.Debug.WriteLine(Session[GlobalVar.SESSION_NAME]);
+        }
+    }
+
 }
 
 <div class="container-fluid">
-    
     @{
-        if (@Session[WebTest.Infrastructure.GlobalVar.SESSION_NAME] != null)
+        if (Session[WebTest.Infrastructure.GlobalVar.SESSION_NAME] != null)
         {
             <div class="jumbotron">
                 <div class="container">
@@ -53,7 +77,7 @@
                     </div>
                 </div>
             </div>
-            
+
         }
         else
         {

@@ -1,7 +1,7 @@
 ﻿@model WebTest.Controllers.GaefaController.GaefaMultipleModelNew
 
 @{
-    ViewBag.Title = "WebTest - Purchased";
+    ViewBag.Title = "WebTest - Sold Package";
     Layout = "~/Views/Shared/GaefaTemplate.cshtml";
 }
 
@@ -27,6 +27,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <span class="label label-primary">@item.dateToGo.ToString("dd/MM/yyyy")</span>
+                                            <p>Order Reference: <b>@Html.DisplayFor(model => item.orderReference)</b></p>
                                             @*
                                             <span class="label label-primary">@Html.DisplayFor(modelItem => package.startDate)</span>
                                             ~
@@ -37,6 +38,14 @@
                                             @if (item.paymentMethod == "Transfer")
                                             {
                                                 <form action="@Url.Action("DetailWithPayment","Gaefa")" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="bookingCode" value="@Html.DisplayFor(modelItem => item.bookCode)" />
+                                                    <input type="submit" class="btn btn-primary pull-right" value="Show more detail" />
+                                                </form>
+                                            }
+                                            else if (item.paymentMethod == "Zero")
+                                            {
+                                                <form action="@Url.Action("ZeroPaymentDetail","Gaefa")" method="post">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="bookingCode" value="@Html.DisplayFor(modelItem => item.bookCode)" />
                                                     <input type="submit" class="btn btn-primary pull-right" value="Show more detail" />

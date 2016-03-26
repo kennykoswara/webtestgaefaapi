@@ -32,11 +32,17 @@ namespace WebTest
         public string status { get; set; }
         public int childCount { get; set; }
         public int adultCount { get; set; }
+        public int childNoBedCount { get; set; }
         public int passengerAmount { get; set; }
         public decimal totalPrice { get; set; }
         public string note { get; set; }
         public string couponCode { get; set; }
+        public string promoCode { get; set; }
+        public bool postedToGaefa { get; set; }
+        public bool postedPassenger { get; set; }
     
+        public virtual gaefa_coupon gaefa_coupon { get; set; }
+        public virtual gaefa_promo gaefa_promo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<gaefa_paypal_new> gaefa_paypal_new { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

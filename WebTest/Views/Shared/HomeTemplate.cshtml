@@ -1,6 +1,5 @@
 ﻿<!DOCTYPE html>
 
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -41,6 +40,11 @@
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script>
         $(".nav-tabs a").click(function () {
+            $(this).tab('show');
+        });
+    </script>
+    <script>
+        $(".nav-pills a").click(function () {
             $(this).tab('show');
         });
     </script>

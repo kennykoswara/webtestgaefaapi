@@ -27,7 +27,7 @@
             <div class="col-md-6">
                 <form id="toDetailForm" method="post">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="bookingCode" value="" />
+                    <input type="hidden" name="bookingCode" id="bookCodePreview" value="" />
                     <input type="submit" id="toDetailButton" class="btn btn-primary pull-right" value="Show more detail" />
                 </form>
             </div>
